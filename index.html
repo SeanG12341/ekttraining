@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EKT Training — Elijah King Turner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+
+    /* ─── Reset ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --navy:   #1A3A8F;
+      --navy-d: #122d72;
+      --navy-l: #4a7fe8;
+      --bg:     #05080f;
+      --bg2:    #070c18;
+      --bg3:    #060a14;
+      --white:  #ffffff;
+      --w70:    rgba(255,255,255,0.70);
+      --w55:    rgba(255,255,255,0.55);
+      --w40:    rgba(255,255,255,0.40);
+      --w25:    rgba(255,255,255,0.25);
+      --w15:    rgba(255,255,255,0.15);
+      --w08:    rgba(255,255,255,0.08);
+      --w05:    rgba(255,255,255,0.05);
+      --w03:    rgba(255,255,255,0.03);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Scroll reveal ──────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.80s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.80s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.in-view { opacity: 1; transform: none; }
+    .d1 { transition-delay: 0.08s; }
+    .d2 { transition-delay: 0.17s; }
+    .d3 { transition-delay: 0.26s; }
+    .d4 { transition-delay: 0.34s; }
+    .d5 { transition-delay: 0.42s; }
+
+    /* ─── Layout helpers ─────────────────────────────────────── */
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 0 44px; }
+    .sec  { padding: 112px 0; }
+    .sec--alt { background: var(--bg2); border-top: 1px solid var(--w05); border-bottom: 1px solid var(--w05); }
+    hr.div { border: none; border-top: 1px solid var(--w05); }
+
+    .sec__label {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.46em; text-transform: uppercase;
+      color: var(--navy-l); opacity: 0.72; margin-bottom: 14px;
+    }
+    .sec__title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 5.5vw, 68px);
+      line-height: 0.92; letter-spacing: 0.025em;
+      text-transform: uppercase; color: var(--white);
+      margin-bottom: 52px;
+    }
+    .sec__title em { font-style: normal; color: var(--navy-l); }
+
+    /* ─── Buttons ────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: transform .18s, box-shadow .2s, background .18s, color .18s, border-color .18s;
+      white-space: nowrap;
+    }
+    .btn--navy  { background: var(--navy); color: var(--white); padding: 14px 26px; }
+    .btn--navy:hover { background: var(--navy-d); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(26,58,143,0.5); }
+    .btn--navy:hover .arr { transform: translateX(5px); }
+
+    .btn--outline { border: 1px solid var(--w15); color: var(--w55); padding: 13px 22px; }
+    .btn--outline:hover { border-color: var(--w40); color: var(--white); transform: translateY(-1px); }
+
+    .btn--ghost { color: var(--w55); padding: 14px 0; }
+    .btn--ghost:hover { color: var(--white); }
+
+    .arr { display: inline-block; transition: transform .2s; }
+
+    /* ════════════════════════════════════════════════════════
+       FLOATING NAV
+    ════════════════════════════════════════════════════════ */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 300;
+      padding: 20px 32px;          /* open air at top */
+      transition: padding .45s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* The inner bar — starts invisible, becomes a pill */
+    .nav__bar {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      height: 52px;
+      padding: 0 28px;
+      border-radius: 100px;
+      border: 1px solid transparent;
+      background: transparent;
+      transition:
+        background .45s cubic-bezier(0.16,1,0.3,1),
+        border-color .45s cubic-bezier(0.16,1,0.3,1),
+        box-shadow .45s cubic-bezier(0.16,1,0.3,1),
+        padding .45s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* Scrolled state: pill with glass effect */
+    .nav.scrolled { padding: 12px 32px; }
+    .nav.scrolled .nav__bar {
+      background: rgba(5,8,15,0.82);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-color: var(--w08);
+      box-shadow: 0 8px 48px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    /* Logo */
+    .nav__logo {
+      display: flex; align-items: center; gap: 9px;
+      text-decoration: none; margin-right: auto; flex-shrink: 0;
+    }
+    .nav__logo-box { width: 11px; height: 11px; background: var(--navy-l); border-radius: 2px; }
+    .nav__logo-text { font-size: 11px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--white); }
+    .nav__logo-text em { font-style: normal; color: var(--w40); }
+
+    /* Links */
+    .nav__links { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 36px; list-style: none; }
+    .nav__links a { font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--w40); text-decoration: none; transition: color .18s; }
+    .nav__links a:hover { color: var(--white); }
+
+    /* Actions */
+    .nav__actions { display: flex; align-items: center; gap: 18px; margin-left: auto; }
+    .nav__book {
+      font-size: 9.5px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; text-decoration: none;
+      background: var(--navy); color: var(--white);
+      padding: 8px 18px; border-radius: 100px;
+      transition: background .2s, transform .18s, box-shadow .2s;
+    }
+    .nav__book:hover { background: var(--navy-d); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(26,58,143,0.45); }
+
+    /* Burger */
+    .nav__burger {
+      display: none; flex-direction: column; justify-content: center;
+      gap: 5px; width: 30px; height: 30px;
+      cursor: pointer; background: none; border: none; margin-left: auto; padding: 2px;
+    }
+    .nav__burger span { display: block; height: 2px; background: var(--w55); border-radius: 1px; transition: all .25s; }
+
+    /* ─── Mobile menu ─────────────────────────────────────────── */
+    .mmenu {
+      display: none; position: fixed; inset: 0; z-index: 250;
+      background: rgba(5,8,15,0.97); backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      flex-direction: column; padding: 88px 32px 40px;
+      gap: 0;
+    }
+    .mmenu.open { display: flex; }
+    .mmenu a {
+      display: block; font-size: 13px; font-weight: 600;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--w40); text-decoration: none;
+      padding: 20px 0; border-bottom: 1px solid var(--w05);
+      transition: color .18s;
+    }
+    .mmenu a:hover { color: var(--white); }
+    .mmenu__cta { margin-top: 32px; }
+
+    /* ════════════════════════════════════════════════════════
+       HERO
+    ════════════════════════════════════════════════════════ */
+    .hero {
+      position: relative; width: 100%; min-height: 100vh;
+      display: flex; align-items: center; overflow: hidden;
+    }
+
+    .hero__bg-base  { position: absolute; inset: 0; background: #000; }
+
+    .hero__bg-photo { position: absolute; inset: 0; overflow: hidden; }
+    .hero__bg-photo img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: 72% center;
+      filter: brightness(0.78) contrast(1.12) saturate(0.85);
+    }
+
+    .hero__bg-vignette {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to right,
+          #000000          0%,
+          #000000          22%,
+          rgba(0,0,0,0.84) 36%,
+          rgba(0,0,0,0.28) 55%,
+          rgba(0,0,0,0.04) 72%,
+          transparent      84%),
+        linear-gradient(to top,   rgba(0,0,0,0.80) 0%, transparent 24%),
+        linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, transparent 16%);
+    }
+
+    .hero__bg-tint {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 52% 60% at 65% 45%, rgba(26,58,143,0.10) 0%, transparent 58%);
+    }
+
+    /* Content */
+    .hero__inner {
+      position: relative; z-index: 10;
+      width: 100%; max-width: 1280px;
+      margin: 0 auto; padding: 0 44px;
+      padding-top: 92px; /* space for transparent nav */
+    }
+
+    /* Pill badge */
+    .hero__pill {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: rgba(74,127,232,0.10);
+      border: 1px solid rgba(74,127,232,0.20);
+      padding: 7px 15px; border-radius: 100px;
+      margin-bottom: 30px;
+    }
+    .hero__pill-dot {
+      width: 6px; height: 6px; background: var(--navy-l); border-radius: 50%;
+      animation: blink 2.2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.4; transform: scale(0.65); }
+    }
+    .hero__pill-text {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.38em; text-transform: uppercase; color: var(--navy-l);
+    }
+
+    /* Headline */
+    .hero__h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(68px, 9.8vw, 120px);
+      line-height: 0.89; letter-spacing: 0.025em; text-transform: uppercase;
+      margin-bottom: 28px; max-width: 660px;
+    }
+    .hero__h1 .ln  { display: block; }
+    .hero__h1 .wht { color: var(--white); }
+    .hero__h1 .blu { color: var(--navy-l); }
+
+    /* Body copy */
+    .hero__body {
+      font-size: 14px; font-weight: 400; line-height: 1.80;
+      color: var(--w55); max-width: 380px;
+      margin-bottom: 44px; letter-spacing: 0.01em;
+    }
+
+    /* CTAs */
+    .hero__ctas { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+
+    /* Social */
+    .hero__social { position: absolute; bottom: 38px; left: 44px; z-index: 10; display: flex; gap: 16px; }
+    .soc { display: flex; align-items: center; justify-content: center; width: 15px; height: 15px; opacity: 0.24; text-decoration: none; transition: opacity .2s; }
+    .soc:hover { opacity: 0.65; }
+    .soc svg { width: 14px; height: 14px; fill: var(--white); }
+
+    /* Scroll indicator */
+    .hero__scroll {
+      position: absolute; bottom: 38px; left: 50%; transform: translateX(-50%);
+      z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 7px;
+      animation: drift 2.5s ease-in-out infinite;
+    }
+    .hero__scroll-label { font-size: 8px; letter-spacing: 0.42em; text-transform: uppercase; color: rgba(255,255,255,0.18); }
+    .hero__scroll-line  { width: 1px; height: 36px; background: linear-gradient(to bottom, rgba(255,255,255,0.28), transparent); }
+    @keyframes drift {
+      0%,100% { opacity: .22; transform: translateX(-50%) translateY(0); }
+      55%      { opacity: .42; transform: translateX(-50%) translateY(7px); }
+    }
+
+    /* ════════════════════════════════════════════════════════
+       MARQUEE STRIP  (replaces fake-number stats bar)
+    ════════════════════════════════════════════════════════ */
+    .marquee-wrap {
+      background: var(--navy);
+      padding: 13px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-track {
+      display: inline-block;
+      animation: marquee 32s linear infinite;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    .marquee-item {
+      display: inline-block;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.34em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      padding: 0 28px;
+    }
+    .marquee-item .dot { color: rgba(255,255,255,0.20); margin-right: 28px; }
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ════════════════════════════════════════════════════════
+       SERVICES
+    ════════════════════════════════════════════════════════ */
+    .services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+
+    .svc-card {
+      background: var(--w03); border: 1px solid var(--w08);
+      padding: 34px 30px;
+      transition: border-color .22s, background .22s, transform .22s;
+    }
+    .svc-card:hover { border-color: rgba(74,127,232,0.28); background: rgba(74,127,232,0.04); transform: translateY(-3px); }
+
+    .svc-card__num { font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 0.22em; color: var(--navy-l); opacity: 0.5; margin-bottom: 20px; }
+    .svc-card__title { font-size: 15px; font-weight: 700; letter-spacing: 0.03em; color: var(--white); margin-bottom: 10px; }
+    .svc-card__desc  { font-size: 13px; line-height: 1.76; color: var(--w55); }
+    .svc-card__link  {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--navy-l); opacity: 0.5; text-decoration: none;
+      transition: opacity .18s, gap .18s;
+    }
+    .svc-card:hover .svc-card__link { opacity: 0.88; gap: 10px; }
+
+    /* ════════════════════════════════════════════════════════
+       ABOUT
+    ════════════════════════════════════════════════════════ */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+
+    .about__img {
+      position: relative; overflow: hidden;
+      aspect-ratio: 3/4; border: 1px solid var(--w08);
+    }
+    .about__img img {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: 70% center;
+      filter: brightness(0.74) contrast(1.10) saturate(0.85);
+    }
+    .about__img::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 45%);
+    }
+
+    .about__body { font-size: 14px; line-height: 1.85; color: var(--w55); margin-bottom: 36px; }
+
+    /* ════════════════════════════════════════════════════════
+       PRICING
+    ════════════════════════════════════════════════════════ */
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+    .price-card {
+      background: var(--w03); border: 1px solid var(--w08);
+      padding: 32px 26px; display: flex; flex-direction: column;
+      transition: border-color .22s;
+    }
+    .price-card:hover:not(.price-card--feat) { border-color: var(--w15); }
+
+    .price-card--feat {
+      background: rgba(26,58,143,0.10);
+      border-color: rgba(74,127,232,0.38);
+      box-shadow: 0 0 64px rgba(26,58,143,0.18);
+    }
+
+    .price-card__badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--navy); color: var(--white);
+      font-size: 8.5px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+      padding: 5px 12px; margin-bottom: 24px; align-self: flex-start; border-radius: 2px;
+    }
+    .price-card__badge::before { content: ''; display: block; width: 5px; height: 5px; background: var(--navy-l); border-radius: 50%; }
+
+    .price-card__name { font-size: 9px; font-weight: 700; letter-spacing: 0.38em; text-transform: uppercase; color: var(--navy-l); opacity: 0.8; margin-bottom: 16px; }
+
+    .price-card__price { display: flex; align-items: flex-start; gap: 2px; margin-bottom: 8px; }
+    .price-card__dollar { font-size: 17px; font-weight: 700; color: var(--w55); margin-top: 9px; }
+    .price-card__amount { font-family: 'Bebas Neue', sans-serif; font-size: 70px; line-height: 1; letter-spacing: 0.02em; color: var(--white); }
+    .price-card__period { font-size: 11px; color: var(--w25); margin-top: auto; margin-bottom: 5px; margin-left: 3px; }
+
+    .price-card__desc {
+      font-size: 12.5px; color: var(--w55); line-height: 1.70;
+      padding-bottom: 20px; margin-bottom: 20px;
+      border-bottom: 1px solid var(--w08);
+    }
+
+    .price-card__features { list-style: none; flex: 1; display: flex; flex-direction: column; gap: 11px; margin-bottom: 28px; }
+    .price-card__feature  { display: flex; align-items: flex-start; gap: 10px; font-size: 12.5px; color: rgba(255,255,255,0.65); line-height: 1.5; }
+
+    .chk {
+      display: inline-block; width: 14px; height: 14px;
+      border: 1px solid var(--w15); flex-shrink: 0; margin-top: 1px; position: relative;
+    }
+    .chk::after {
+      content: ''; position: absolute; left: 3px; top: 2px;
+      width: 6px; height: 4px;
+      border-left: 1.5px solid var(--navy-l); border-bottom: 1.5px solid var(--navy-l);
+      transform: rotate(-45deg);
+    }
+    .price-card--feat .chk { border-color: rgba(74,127,232,0.38); }
+
+    .price-card__cta {
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      padding: 13px 20px; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none;
+      transition: transform .18s, box-shadow .2s, background .18s, color .18s, border-color .18s;
+    }
+    .price-card__cta .arr { transition: transform .2s; }
+    .price-card__cta:hover .arr { transform: translateX(4px); }
+
+    .cta--navy { background: var(--navy); color: var(--white); }
+    .cta--navy:hover { background: var(--navy-d); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(26,58,143,0.45); }
+    .cta--outline { border: 1px solid var(--w15); color: var(--w55); }
+    .cta--outline:hover { border-color: var(--w30); color: var(--white); transform: translateY(-1px); }
+
+    .pricing__note { margin-top: 28px; text-align: center; font-size: 11px; color: var(--w25); letter-spacing: 0.04em; }
+
+    /* ════════════════════════════════════════════════════════
+       CTA SECTION
+    ════════════════════════════════════════════════════════ */
+    .cta-sec {
+      background: var(--bg3); border-top: 1px solid var(--w05);
+      padding: 128px 44px; text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-sec__glow {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 700px; height: 320px;
+      background: radial-gradient(ellipse, rgba(26,58,143,0.20) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .cta-sec__label { font-size: 9px; font-weight: 700; letter-spacing: 0.46em; text-transform: uppercase; color: var(--navy-l); opacity: 0.65; margin-bottom: 18px; }
+    .cta-sec__title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 8.5vw, 100px);
+      line-height: 0.90; letter-spacing: 0.025em; text-transform: uppercase; color: var(--white); margin-bottom: 20px;
+    }
+    .cta-sec__title em { font-style: normal; color: var(--navy-l); }
+    .cta-sec__body { font-size: 14px; line-height: 1.78; color: var(--w40); max-width: 440px; margin: 0 auto 44px; }
+    .cta-sec__actions { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+    /* ════════════════════════════════════════════════════════
+       FOOTER
+    ════════════════════════════════════════════════════════ */
+    .footer { background: #020409; border-top: 1px solid var(--w05); padding: 36px 44px; }
+    .footer__inner {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+    }
+    .footer__logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .footer__logo-box { width: 10px; height: 10px; background: var(--navy); border-radius: 2px; }
+    .footer__logo-text { font-size: 10px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--w40); }
+    .footer__links { display: flex; gap: 28px; list-style: none; }
+    .footer__links a { font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--w25); text-decoration: none; transition: color .18s; }
+    .footer__links a:hover { color: var(--w70); }
+    .footer__social { display: flex; gap: 14px; }
+    .fsoc { display: flex; align-items: center; justify-content: center; width: 14px; height: 14px; opacity: 0.22; text-decoration: none; transition: opacity .18s; }
+    .fsoc:hover { opacity: 0.60; }
+    .fsoc svg { width: 13px; height: 13px; fill: var(--white); }
+    .footer__copy { width: 100%; text-align: center; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--w05); font-size: 10.5px; color: var(--w25); letter-spacing: 0.05em; }
+
+    /* ─── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .about-grid { grid-template-columns: 1fr; gap: 52px; }
+      .about__img  { aspect-ratio: 16/9; }
+      .pricing-grid { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav__links, .nav__actions { display: none; }
+      .nav__burger { display: flex; }
+      .nav { padding: 16px 20px; }
+      .nav.scrolled { padding: 10px 20px; }
+      .nav__bar { padding: 0 18px; }
+      .wrap { padding: 0 24px; }
+      .sec  { padding: 76px 0; }
+      .hero__inner { padding: 0 24px; padding-top: 88px; }
+      .hero__social { left: 24px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .pricing-grid  { grid-template-columns: 1fr; }
+      .cta-sec { padding: 88px 24px; }
+      .footer  { padding: 28px 24px; }
+      .footer__links { display: none; }
+    }
+    @media (max-width: 480px) {
+      .hero__h1 { font-size: 54px; }
+      .sec__title { font-size: 38px; }
+      .price-card__amount { font-size: 58px; }
+      .cta-sec__title { font-size: 54px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     FLOATING NAV
+══════════════════════════════════════════════ -->
+<header class="nav" id="mainNav">
+  <div class="nav__bar">
+    <a href="#" class="nav__logo">
+      <div class="nav__logo-box"></div>
+      <span class="nav__logo-text">EKT <em>/</em> Training</span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="nav__links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav__actions">
+      <a href="#contact" class="nav__book">Book Now</a>
+    </div>
+
+    <button class="nav__burger" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu(this)">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div class="mmenu" id="mobileMenu">
+  <a href="#services" onclick="closeMenu()">Services</a>
+  <a href="#about"    onclick="closeMenu()">About</a>
+  <a href="#pricing"  onclick="closeMenu()">Pricing</a>
+  <a href="#contact"  onclick="closeMenu()">Contact</a>
+  <div class="mmenu__cta">
+    <a href="#contact" onclick="closeMenu()" class="btn btn--navy">Book Now <span class="arr">&#8594;</span></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div aria-hidden="true">
+    <div class="hero__bg-base"></div>
+    <div class="hero__bg-photo">
+      <img src="hero-photo.png" alt="" role="presentation" />
+    </div>
+    <div class="hero__bg-tint"></div>
+    <div class="hero__bg-vignette"></div>
+  </div>
+
+  <div class="hero__inner">
+    <div class="hero__pill">
+      <div class="hero__pill-dot"></div>
+      <span class="hero__pill-text">Personal Training · Strength · Performance</span>
+    </div>
+
+    <h1 class="hero__h1">
+      <span class="ln wht">Build <span class="blu">Power</span></span>
+      <span class="ln wht">Elevate</span>
+      <span class="ln wht">Performance.</span>
+    </h1>
+
+    <p class="hero__body">
+      One-on-one training with Elijah King Turner. Custom programming,
+      accountability, and the structure you need to level up — for real.
+    </p>
+
+    <div class="hero__ctas">
+      <a href="#contact" class="btn btn--navy">Book a Consultation <span class="arr">&#8594;</span></a>
+      <a href="#services" class="btn btn--ghost">See Services</a>
+    </div>
+  </div>
+
+  <div class="hero__social" aria-label="Social">
+    <a href="#" class="soc" aria-label="Instagram">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+    </a>
+    <a href="#" class="soc" aria-label="X">
+      <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.916-9.057L2.168 2.25H8.08l4.231 5.597 5.933-5.597zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a href="#" class="soc" aria-label="YouTube">
+      <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    </a>
+  </div>
+
+  <div class="hero__scroll" aria-hidden="true">
+    <span class="hero__scroll-label">Scroll</span>
+    <div class="hero__scroll-line"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     MARQUEE STRIP  (no fake numbers — brand words only)
+══════════════════════════════════════════════ -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track">
+    <!-- Content doubled for seamless loop -->
+    <span class="marquee-item">Strength<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Performance<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Discipline<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Results<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Accountability<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Coaching<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Power<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Transformation<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Strength<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Performance<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Discipline<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Results<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Accountability<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Coaching<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Power<span class="dot"> ✦ </span></span>
+    <span class="marquee-item">Transformation<span class="dot"> ✦ </span></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SERVICES
+══════════════════════════════════════════════ -->
+<section class="sec" id="services">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="sec__label">What I Offer</p>
+      <h2 class="sec__title">Services Built<br>to <em>Perform</em></h2>
+    </div>
+    <div class="services-grid">
+      <div class="svc-card reveal d1">
+        <div class="svc-card__num">01</div>
+        <h3 class="svc-card__title">Personal Training</h3>
+        <p class="svc-card__desc">One-on-one sessions built around your goals, your current level, and your schedule. Every rep has a purpose — no filler, no guesswork.</p>
+        <a href="#contact" class="svc-card__link">Get started &#8594;</a>
+      </div>
+      <div class="svc-card reveal d2">
+        <div class="svc-card__num">02</div>
+        <h3 class="svc-card__title">Strength Programming</h3>
+        <p class="svc-card__desc">Custom periodized programs designed to systematically build power, muscle, and athletic performance across every training block.</p>
+        <a href="#contact" class="svc-card__link">Get started &#8594;</a>
+      </div>
+      <div class="svc-card reveal d3">
+        <div class="svc-card__num">03</div>
+        <h3 class="svc-card__title">Nutrition Coaching</h3>
+        <p class="svc-card__desc">Evidence-based nutrition strategies tailored to fuel your training — from macro tracking to sustainable habits that actually last.</p>
+        <a href="#contact" class="svc-card__link">Get started &#8594;</a>
+      </div>
+      <div class="svc-card reveal d4">
+        <div class="svc-card__num">04</div>
+        <h3 class="svc-card__title">Online Coaching</h3>
+        <p class="svc-card__desc">Full remote coaching with custom programming, regular check-ins, and direct support — for athletes who train on their own schedule.</p>
+        <a href="#contact" class="svc-card__link">Get started &#8594;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════════════
+     ABOUT
+══════════════════════════════════════════════ -->
+<section class="sec" id="about">
+  <div class="wrap">
+    <div class="about-grid">
+      <div class="about__img reveal">
+        <img src="hero-photo.png" alt="Elijah King Turner" />
+      </div>
+      <div>
+        <div class="reveal">
+          <p class="sec__label">The Trainer</p>
+          <h2 class="sec__title" style="margin-bottom:24px;">Elijah<br><em>King</em><br>Turner</h2>
+        </div>
+        <p class="about__body reveal d1">
+          Elijah King Turner is a personal trainer and strength coach dedicated to building stronger, more capable athletes at every level. His approach is rooted in structured, progressive training and the kind of accountability that drives real, lasting results.
+        </p>
+        <p class="about__body reveal d2" style="margin-bottom:40px;">
+          Whether you're picking up a barbell for the first time or chasing a new PR, Elijah builds programs around where you are — and structures every phase to get you where you want to be.
+        </p>
+        <div class="reveal d3">
+          <a href="#contact" class="btn btn--navy">Work With Me <span class="arr">&#8594;</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════════════
+     PRICING
+══════════════════════════════════════════════ -->
+<section class="sec sec--alt" id="pricing">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="sec__label">Transparent Pricing</p>
+      <h2 class="sec__title">Choose Your <em>Level</em></h2>
+    </div>
+    <div class="pricing-grid">
+
+      <!-- Starter -->
+      <div class="price-card reveal d1">
+        <p class="price-card__name">Starter</p>
+        <div class="price-card__price" style="align-items:center;">
+          <span style="font-size:15px;font-weight:700;color:var(--w55);letter-spacing:-0.02em;">Contact for pricing</span>
+        </div>
+        <p class="price-card__desc">A foundation plan for beginners building consistent habits.</p>
+        <ul class="price-card__features">
+          <li class="price-card__feature"><span class="chk"></span>Personalized workout plan</li>
+          <li class="price-card__feature"><span class="chk"></span>Basic nutrition guidance</li>
+          <li class="price-card__feature"><span class="chk"></span>Progress tracking</li>
+          <li class="price-card__feature"><span class="chk"></span>Email support</li>
+        </ul>
+        <a href="#contact" class="price-card__cta cta--outline">Get Started <span class="arr">&#8594;</span></a>
+      </div>
+
+      <!-- Performance (featured) -->
+      <div class="price-card price-card--feat reveal d2">
+        <div class="price-card__badge">Most Popular</div>
+        <p class="price-card__name">Performance</p>
+        <div class="price-card__price" style="align-items:center;">
+          <span style="font-size:15px;font-weight:700;color:rgba(74,127,232,0.9);letter-spacing:-0.02em;">Contact for pricing</span>
+        </div>
+        <p class="price-card__desc">For athletes ready to commit to a structured program.</p>
+        <ul class="price-card__features">
+          <li class="price-card__feature"><span class="chk"></span>Custom periodized programming</li>
+          <li class="price-card__feature"><span class="chk"></span>Nutrition planning</li>
+          <li class="price-card__feature"><span class="chk"></span>Regular check-ins</li>
+          <li class="price-card__feature"><span class="chk"></span>Priority scheduling</li>
+          <li class="price-card__feature"><span class="chk"></span>Text support</li>
+        </ul>
+        <a href="#contact" class="price-card__cta cta--navy">Book Now <span class="arr">&#8594;</span></a>
+      </div>
+
+      <!-- Elite -->
+      <div class="price-card reveal d3">
+        <p class="price-card__name">Elite</p>
+        <div class="price-card__price" style="align-items:center;">
+          <span style="font-size:15px;font-weight:700;color:var(--w55);letter-spacing:-0.02em;">Contact for pricing</span>
+        </div>
+        <p class="price-card__desc">Full-spectrum coaching with daily accountability.</p>
+        <ul class="price-card__features">
+          <li class="price-card__feature"><span class="chk"></span>Advanced programming</li>
+          <li class="price-card__feature"><span class="chk"></span>Nutrition and recovery support</li>
+          <li class="price-card__feature"><span class="chk"></span>Daily accountability</li>
+          <li class="price-card__feature"><span class="chk"></span>Movement analysis</li>
+        </ul>
+        <a href="#contact" class="price-card__cta cta--outline">Go Elite <span class="arr">&#8594;</span></a>
+      </div>
+
+    </div>
+    <p class="pricing__note reveal d4">Not sure which plan fits? <a href="#contact" style="color:var(--navy-l);opacity:0.6;text-decoration:underline;text-underline-offset:3px;">Book a free consultation</a> to discuss your options.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     CONTACT / CTA
+══════════════════════════════════════════════ -->
+<section class="cta-sec" id="contact">
+  <div class="cta-sec__glow" aria-hidden="true"></div>
+  <div style="position:relative;z-index:1;">
+    <div class="reveal">
+      <p class="cta-sec__label">Start Today</p>
+      <h2 class="cta-sec__title">Ready to<br><em>Level Up?</em></h2>
+      <p class="cta-sec__body">
+        Book a free 30-minute consultation. We'll talk about your goals, where you are right now, and exactly what it'll take to get there.
+      </p>
+      <div class="cta-sec__actions">
+        <a href="#contact" class="btn btn--navy" style="font-size:10.5px;padding:15px 30px;">Book a Free Call <span class="arr">&#8594;</span></a>
+        <a href="#services" class="btn btn--outline" style="font-size:10.5px;padding:14px 26px;">View Services</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer__inner">
+    <a href="#" class="footer__logo">
+      <div class="footer__logo-box"></div>
+      <span class="footer__logo-text">EKT Training</span>
+    </a>
+    <ul class="footer__links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="footer__social">
+      <a href="#" class="fsoc" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      </a>
+      <a href="#" class="fsoc" aria-label="X">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.916-9.057L2.168 2.25H8.08l4.231 5.597 5.933-5.597zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </a>
+      <a href="#" class="fsoc" aria-label="YouTube">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </a>
+    </div>
+    <div class="footer__copy">&copy; 2026 EKT Training. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════ -->
+<script>
+  /* ── Floating nav on scroll ── */
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  /* ── Mobile menu ── */
+  function toggleMenu(btn) {
+    const menu = document.getElementById('mobileMenu');
+    const open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+    const s = btn.querySelectorAll('span');
+    if (open) {
+      s[0].style.transform = 'translateY(7px) rotate(45deg)';
+      s[1].style.opacity   = '0';
+      s[2].style.transform = 'translateY(-7px) rotate(-45deg)';
+    } else {
+      s.forEach(x => { x.style.transform = ''; x.style.opacity = ''; });
+    }
+  }
+
+  function closeMenu() {
+    const menu   = document.getElementById('mobileMenu');
+    const burger = document.querySelector('.nav__burger');
+    menu.classList.remove('open');
+    burger.setAttribute('aria-expanded', false);
+    burger.querySelectorAll('span').forEach(x => { x.style.transform = ''; x.style.opacity = ''; });
+  }
+
+  document.addEventListener('pointerdown', e => {
+    const menu   = document.getElementById('mobileMenu');
+    const burger = document.querySelector('.nav__burger');
+    if (!menu.classList.contains('open')) return;
+    if (!menu.contains(e.target) && !burger.contains(e.target)) closeMenu();
+  });
+
+  /* ── Scroll reveal ── */
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in-view'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  /* ── Hero parallax ── */
+  const heroInner = document.querySelector('.hero__inner');
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY, vh = window.innerHeight;
+    if (y < vh && heroInner) {
+      heroInner.style.transform = `translateY(${y * 0.17}px)`;
+      heroInner.style.opacity   = Math.max(0, 1 - y / (vh * 0.65));
+    }
+  }, { passive: true });
+</script>
+</body>
+</html>

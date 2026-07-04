@@ -1,0 +1,489 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 960" preserveAspectRatio="xMidYMax meet">
+<defs>
+
+  <!-- ══ ATMOSPHERE ══ -->
+  <linearGradient id="atmoGrad" x1="30%" y1="0%" x2="70%" y2="100%">
+    <stop offset="0%"   stop-color="#0c1a36"/>
+    <stop offset="50%"  stop-color="#070e1c"/>
+    <stop offset="100%" stop-color="#020407"/>
+  </linearGradient>
+  <radialGradient id="backBurst" cx="78%" cy="8%" r="60%">
+    <stop offset="0%"   stop-color="#2a4a8a" stop-opacity="0.55"/>
+    <stop offset="40%"  stop-color="#152550" stop-opacity="0.25"/>
+    <stop offset="100%" stop-color="transparent"/>
+  </radialGradient>
+  <radialGradient id="midGlow" cx="55%" cy="48%" r="45%">
+    <stop offset="0%"   stop-color="#1a2e5a" stop-opacity="0.22"/>
+    <stop offset="100%" stop-color="transparent"/>
+  </radialGradient>
+
+  <!-- ══ SKIN TONES ══ -->
+  <!-- Base: warm dark brown with right-side lighting -->
+  <linearGradient id="skinBase" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%"   stop-color="#160c08"/>
+    <stop offset="30%"  stop-color="#261408"/>
+    <stop offset="65%"  stop-color="#3a2010"/>
+    <stop offset="88%"  stop-color="#522a14"/>
+    <stop offset="100%" stop-color="#6a3418"/>
+  </linearGradient>
+  <!-- Arm/forearm skin — more lit from right -->
+  <linearGradient id="skinArm" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%"   stop-color="#1c1008"/>
+    <stop offset="55%"  stop-color="#3e2212"/>
+    <stop offset="85%"  stop-color="#5e3018"/>
+    <stop offset="100%" stop-color="#7a3e20"/>
+  </linearGradient>
+  <!-- Upper back — bent toward viewer, backlit -->
+  <linearGradient id="skinBack" x1="0%" y1="0%" x2="100%" y2="20%">
+    <stop offset="0%"   stop-color="#100a06"/>
+    <stop offset="45%"  stop-color="#2a1808"/>
+    <stop offset="80%"  stop-color="#422010"/>
+    <stop offset="100%" stop-color="#5c2c14"/>
+  </linearGradient>
+  <!-- Head/face — most lit -->
+  <radialGradient id="skinFace" cx="55%" cy="40%" r="58%">
+    <stop offset="0%"   stop-color="#5e3018"/>
+    <stop offset="55%"  stop-color="#3e2010"/>
+    <stop offset="100%" stop-color="#1e1008"/>
+  </radialGradient>
+  <!-- Shoulder cap highlight -->
+  <radialGradient id="deltHL" cx="62%" cy="32%" r="55%">
+    <stop offset="0%"   stop-color="#7a4220"/>
+    <stop offset="50%"  stop-color="#4a2810"/>
+    <stop offset="100%" stop-color="#1e1008"/>
+  </radialGradient>
+  <!-- Quad highlight -->
+  <radialGradient id="quadHL" cx="55%" cy="35%" r="60%">
+    <stop offset="0%"   stop-color="#6a3818"/>
+    <stop offset="55%"  stop-color="#3c2010"/>
+    <stop offset="100%" stop-color="#180e06"/>
+  </radialGradient>
+  <!-- Calf highlight -->
+  <radialGradient id="calfHL" cx="60%" cy="30%" r="55%">
+    <stop offset="0%"   stop-color="#5a3016"/>
+    <stop offset="60%"  stop-color="#301808"/>
+    <stop offset="100%" stop-color="#140c06"/>
+  </radialGradient>
+
+  <!-- ══ RIM LIGHT (cool blue-white backlight) ══ -->
+  <linearGradient id="rimH" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%"   stop-color="#5080d0" stop-opacity="0"/>
+    <stop offset="70%"  stop-color="#80aae8" stop-opacity="0.35"/>
+    <stop offset="100%" stop-color="#aacaf8" stop-opacity="0.75"/>
+  </linearGradient>
+  <linearGradient id="rimHWarm" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%"   stop-color="#e06030" stop-opacity="0"/>
+    <stop offset="72%"  stop-color="#d86040" stop-opacity="0.25"/>
+    <stop offset="100%" stop-color="#f0804a" stop-opacity="0.60"/>
+  </linearGradient>
+
+  <!-- ══ CLOTHING ══ -->
+  <linearGradient id="shortsGrad" x1="0%" y1="0%" x2="100%" y2="40%">
+    <stop offset="0%"   stop-color="#080a0e"/>
+    <stop offset="60%"  stop-color="#0e1018"/>
+    <stop offset="100%" stop-color="#141820"/>
+  </linearGradient>
+  <linearGradient id="beltGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%"   stop-color="#1e1a10"/>
+    <stop offset="50%"  stop-color="#2a2214"/>
+    <stop offset="100%" stop-color="#161210"/>
+  </linearGradient>
+
+  <!-- ══ BARBELL ══ -->
+  <linearGradient id="barGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%"   stop-color="#3a3a3a"/>
+    <stop offset="40%"  stop-color="#282828"/>
+    <stop offset="100%" stop-color="#0e0e0e"/>
+  </linearGradient>
+  <radialGradient id="plateGrad" cx="38%" cy="32%" r="65%">
+    <stop offset="0%"   stop-color="#303030"/>
+    <stop offset="55%"  stop-color="#181818"/>
+    <stop offset="100%" stop-color="#060606"/>
+  </radialGradient>
+  <radialGradient id="plateShine" cx="30%" cy="25%" r="45%">
+    <stop offset="0%"   stop-color="#4a4a4a" stop-opacity="0.6"/>
+    <stop offset="100%" stop-color="transparent"/>
+  </radialGradient>
+
+  <!-- ══ FILTERS ══ -->
+  <filter id="rimGlow" x="-18%" y="-18%" width="136%" height="136%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="softBlur">
+    <feGaussianBlur stdDeviation="3"/>
+  </filter>
+  <filter id="groundBlur">
+    <feGaussianBlur stdDeviation="10"/>
+  </filter>
+  <filter id="subtleBlur">
+    <feGaussianBlur stdDeviation="1.5"/>
+  </filter>
+
+</defs>
+
+<!-- ════════════════════
+     BACKGROUND
+════════════════════ -->
+<rect width="720" height="960" fill="url(#atmoGrad)"/>
+<rect width="720" height="960" fill="url(#backBurst)"/>
+<rect width="720" height="960" fill="url(#midGlow)"/>
+
+<!-- ══ GYM SILHOUETTES ══ -->
+<!-- Power rack left -->
+<g fill="#04060c" opacity="0.85">
+  <rect x="10"  y="120" width="14" height="820"/>
+  <rect x="100" y="120" width="14" height="820"/>
+  <rect x="10"  y="120" width="104" height="12"/>
+  <rect x="10"  y="290" width="104" height="8"/>
+  <rect x="10"  y="440" width="104" height="8"/>
+  <rect x="10"  y="570" width="104" height="8"/>
+  <rect x="20"  y="438" width="32"  height="14" rx="2"/>
+</g>
+<!-- Power rack right -->
+<g fill="#030508" opacity="0.80">
+  <rect x="598" y="90"  width="14" height="860"/>
+  <rect x="686" y="90"  width="14" height="860"/>
+  <rect x="598" y="90"  width="102" height="12"/>
+  <rect x="598" y="260" width="102" height="8"/>
+  <rect x="598" y="410" width="102" height="8"/>
+  <rect x="598" y="540" width="102" height="8"/>
+</g>
+<!-- Background cable machines, vague shapes -->
+<g fill="#050810" opacity="0.55">
+  <rect x="128" y="600" width="10" height="360"/>
+  <rect x="158" y="600" width="10" height="360"/>
+  <rect x="128" y="600" width="40"  height="8"/>
+  <rect x="178" y="660" width="50"  height="6"/>
+</g>
+
+<!-- Rubber mat platform -->
+<rect x="115" y="898" width="490" height="16" rx="3" fill="#0c1422"/>
+<rect x="130" y="900" width="460" height="11" rx="2" fill="#101828"/>
+
+<!-- Floor -->
+<rect x="0" y="912" width="720" height="48" fill="#020406"/>
+
+<!-- Atmospheric chalk/ground haze -->
+<ellipse cx="370" cy="912" rx="265" ry="22" fill="#1a2848" opacity="0.28" filter="url(#groundBlur)"/>
+<ellipse cx="370" cy="905" rx="180" ry="12" fill="#243858" opacity="0.18" filter="url(#groundBlur)"/>
+
+<!-- ════════════════════════════════════════
+     FIGURE — Black man, muscular, deadlifting
+     Pose: mid-pull, bar just off floor, 3/4 front-right view
+     Torso bent ~50° forward, looking up
+════════════════════════════════════════ -->
+
+<!-- ─── LAYER 1: BASE SILHOUETTE (establishes full body shape) ─── -->
+<g fill="#110908">
+  <!-- Head -->
+  <ellipse cx="368" cy="212" rx="52" ry="60" transform="rotate(-22 368 212)"/>
+  <!-- Neck -->
+  <path d="M 336 252 C 332 268 330 285 334 302 L 346 308 L 390 308 L 400 302 C 402 286 400 268 396 252 Z"/>
+  <!-- Massive traps -->
+  <path d="M 240 295 C 215 305 198 328 202 358 C 205 380 224 394 248 390 L 340 368 L 398 360 L 450 368 L 538 388 C 562 392 580 378 582 354 C 584 325 566 306 540 296 L 460 280 L 395 276 L 320 278 Z"/>
+  <!-- Left delt -->
+  <ellipse cx="228" cy="355" rx="52" ry="60" transform="rotate(20 228 355)"/>
+  <!-- Right delt (toward viewer) -->
+  <ellipse cx="560" cy="345" rx="58" ry="65" transform="rotate(-15 560 345)"/>
+  <!-- Upper back — bent forward so back faces viewer -->
+  <path d="M 215 355 C 200 375 195 408 200 440 C 205 468 222 488 245 494 L 290 505 L 350 512 L 415 510 L 468 500 C 492 492 508 470 510 442 C 512 410 504 378 488 358 L 430 342 L 362 338 Z"/>
+  <!-- Lats (wide V-taper) -->
+  <path d="M 200 370 C 178 390 168 430 172 468 C 176 496 195 514 218 514 L 265 510 L 262 462 L 250 418 Z"/>
+  <path d="M 498 362 C 522 382 532 422 528 460 C 524 488 506 508 482 510 L 435 508 L 438 458 L 452 415 Z"/>
+  <!-- Mid/lower back (erectors visible in bent position) -->
+  <path d="M 248 490 C 232 505 225 532 228 560 C 232 585 248 600 268 604 L 310 612 L 360 616 L 408 612 L 448 604 C 468 598 482 582 484 556 C 486 530 476 506 460 490 L 410 480 L 360 476 Z"/>
+  <!-- Belt area -->
+  <path d="M 248 558 C 240 568 236 582 238 596 L 250 612 L 360 618 L 472 612 L 482 596 C 484 582 480 568 472 558 Z"/>
+  <!-- Hips/glutes -->
+  <ellipse cx="360" cy="638" rx="130" ry="82"/>
+  <ellipse cx="316" cy="632" rx="78"  ry="65" opacity="0.9"/>
+  <ellipse cx="404" cy="628" rx="85"  ry="68" opacity="0.9"/>
+
+  <!-- Left upper arm -->
+  <path d="M 218 368 C 202 382 192 415 192 448 C 192 480 202 508 215 524 C 225 538 240 544 254 538 C 268 532 276 514 276 488 C 276 458 268 422 258 396 C 248 372 232 362 218 368 Z"/>
+  <!-- Left forearm -->
+  <path d="M 214 528 C 200 545 194 575 196 604 C 198 630 210 648 224 650 C 238 652 250 638 254 614 C 258 588 255 558 248 534 Z"/>
+  <!-- Left hand -->
+  <path d="M 198 648 C 194 660 196 672 204 678 C 212 684 225 682 232 672 C 238 662 236 648 228 642 Z"/>
+
+  <!-- Right upper arm (facing viewer, thicker) -->
+  <path d="M 568 358 C 585 372 598 408 600 445 C 602 480 592 510 578 526 C 566 540 550 545 536 538 C 522 530 514 510 514 482 C 514 450 524 415 536 390 C 548 365 558 352 568 358 Z"/>
+  <!-- Right forearm (heavily muscled) -->
+  <path d="M 578 524 C 594 542 600 574 596 605 C 592 632 578 650 562 652 C 546 654 534 640 530 615 C 526 590 532 558 542 534 Z"/>
+  <!-- Right hand -->
+  <path d="M 594 648 C 600 660 598 675 590 681 C 582 687 568 684 562 674 C 556 664 558 649 566 643 Z"/>
+
+  <!-- Left thigh -->
+  <path d="M 258 628 C 240 642 228 672 226 705 C 224 736 232 764 246 784 C 258 800 276 808 294 804 C 312 800 325 785 328 762 C 332 735 326 700 316 672 C 306 646 288 626 272 624 Z"/>
+  <!-- Left hamstring -->
+  <ellipse cx="265" cy="715" rx="52" ry="115" opacity="0.7"/>
+  <!-- Left lower leg (calf) -->
+  <path d="M 238 800 C 224 818 218 845 220 870 C 222 892 232 906 246 908 C 260 910 274 900 280 880 C 286 860 284 832 276 810 C 268 788 254 790 238 800 Z"/>
+  <!-- Left foot -->
+  <ellipse cx="248" cy="912" rx="62" ry="14" transform="rotate(-6 248 912)"/>
+
+  <!-- Right thigh (toward viewer, dominant) -->
+  <path d="M 406 622 C 428 636 448 666 456 700 C 464 732 460 764 446 786 C 432 806 412 815 392 811 C 372 807 358 792 354 768 C 350 740 358 706 372 680 C 386 655 400 618 406 622 Z"/>
+  <!-- Right hamstring -->
+  <ellipse cx="425" cy="710" rx="56" ry="118" opacity="0.7"/>
+  <!-- Right lower leg -->
+  <path d="M 450 790 C 466 810 474 840 472 868 C 470 892 458 908 444 910 C 430 912 416 902 410 880 C 404 858 408 830 418 808 C 428 786 444 782 450 790 Z"/>
+  <!-- Right foot -->
+  <ellipse cx="448" cy="914" rx="66" ry="14" transform="rotate(4 448 914)"/>
+</g>
+
+<!-- ─── LAYER 2: SKIN COLOUR FILL ─── -->
+<g opacity="0.92">
+  <!-- UPPER BACK (most visible in bent-forward pose) -->
+  <path d="M 215 355 C 200 375 195 408 200 440 C 205 468 222 488 245 494 L 290 505 L 350 512 L 415 510 L 468 500 C 492 492 508 470 510 442 C 512 410 504 378 488 358 L 430 342 L 362 338 Z" fill="url(#skinBack)"/>
+
+  <!-- TRAPS -->
+  <path d="M 240 295 C 215 305 198 328 202 358 C 205 380 224 394 248 390 L 340 368 L 398 360 L 450 368 L 538 388 C 562 392 580 378 582 354 C 584 325 566 306 540 296 L 460 280 L 395 276 L 320 278 Z" fill="url(#skinBack)"/>
+
+  <!-- LATS -->
+  <path d="M 200 370 C 178 390 168 430 172 468 C 176 496 195 514 218 514 L 265 510 L 262 462 L 250 418 Z" fill="url(#skinBase)"/>
+  <path d="M 498 362 C 522 382 532 422 528 460 C 524 488 506 508 482 510 L 435 508 L 438 458 L 452 415 Z" fill="url(#skinBase)"/>
+
+  <!-- MID/LOWER BACK -->
+  <path d="M 248 490 C 232 505 225 532 228 560 C 232 585 248 600 268 604 L 310 612 L 360 616 L 408 612 L 448 604 C 468 598 482 582 484 556 C 486 530 476 506 460 490 L 410 480 L 360 476 Z" fill="url(#skinBack)"/>
+
+  <!-- HIPS/GLUTES -->
+  <ellipse cx="360" cy="638" rx="130" ry="82" fill="url(#skinBase)"/>
+  <ellipse cx="316" cy="632" rx="78"  ry="65" fill="url(#skinBase)"/>
+  <ellipse cx="404" cy="628" rx="85"  ry="68" fill="url(#skinBase)"/>
+
+  <!-- HEAD -->
+  <ellipse cx="368" cy="212" rx="52" ry="60" transform="rotate(-22 368 212)" fill="url(#skinFace)"/>
+  <!-- Ear right (rim side) -->
+  <ellipse cx="396" cy="218" rx="12" ry="16" fill="#3a2010" transform="rotate(-18 396 218)"/>
+  <!-- Jaw -->
+  <path d="M 335 248 C 332 258 334 270 340 280 C 346 290 358 298 370 300 C 382 302 394 296 400 285 C 406 274 406 262 402 252" fill="url(#skinFace)"/>
+
+  <!-- NECK -->
+  <path d="M 336 252 C 332 268 330 285 334 302 L 346 308 L 390 308 L 400 302 C 402 286 400 268 396 252 Z" fill="url(#skinBase)"/>
+
+  <!-- DELTOID LEFT -->
+  <ellipse cx="228" cy="355" rx="52" ry="60" transform="rotate(20 228 355)" fill="url(#skinBase)"/>
+
+  <!-- DELTOID RIGHT (facing viewer, most lit) -->
+  <ellipse cx="560" cy="345" rx="58" ry="65" transform="rotate(-15 560 345)" fill="url(#deltHL)"/>
+
+  <!-- LEFT UPPER ARM -->
+  <path d="M 218 368 C 202 382 192 415 192 448 C 192 480 202 508 215 524 C 225 538 240 544 254 538 C 268 532 276 514 276 488 C 276 458 268 422 258 396 C 248 372 232 362 218 368 Z" fill="url(#skinArm)"/>
+
+  <!-- LEFT FOREARM -->
+  <path d="M 214 528 C 200 545 194 575 196 604 C 198 630 210 648 224 650 C 238 652 250 638 254 614 C 258 588 255 558 248 534 Z" fill="url(#skinArm)"/>
+
+  <!-- LEFT HAND -->
+  <path d="M 198 648 C 194 660 196 672 204 678 C 212 684 225 682 232 672 C 238 662 236 648 228 642 Z" fill="url(#skinArm)"/>
+
+  <!-- RIGHT UPPER ARM -->
+  <path d="M 568 358 C 585 372 598 408 600 445 C 602 480 592 510 578 526 C 566 540 550 545 536 538 C 522 530 514 510 514 482 C 514 450 524 415 536 390 C 548 365 558 352 568 358 Z" fill="url(#skinArm)"/>
+
+  <!-- RIGHT FOREARM -->
+  <path d="M 578 524 C 594 542 600 574 596 605 C 592 632 578 650 562 652 C 546 654 534 640 530 615 C 526 590 532 558 542 534 Z" fill="url(#skinArm)"/>
+
+  <!-- RIGHT HAND -->
+  <path d="M 594 648 C 600 660 598 675 590 681 C 582 687 568 684 562 674 C 556 664 558 649 566 643 Z" fill="url(#skinArm)"/>
+
+  <!-- THIGHS -->
+  <path d="M 258 628 C 240 642 228 672 226 705 C 224 736 232 764 246 784 C 258 800 276 808 294 804 C 312 800 325 785 328 762 C 332 735 326 700 316 672 C 306 646 288 626 272 624 Z" fill="url(#quadHL)"/>
+  <path d="M 406 622 C 428 636 448 666 456 700 C 464 732 460 764 446 786 C 432 806 412 815 392 811 C 372 807 358 792 354 768 C 350 740 358 706 372 680 C 386 655 400 618 406 622 Z" fill="url(#quadHL)"/>
+
+  <!-- LOWER LEGS -->
+  <path d="M 238 800 C 224 818 218 845 220 870 C 222 892 232 906 246 908 C 260 910 274 900 280 880 C 286 860 284 832 276 810 C 268 788 254 790 238 800 Z" fill="url(#calfHL)"/>
+  <path d="M 450 790 C 466 810 474 840 472 868 C 470 892 458 908 444 910 C 430 912 416 902 410 880 C 404 858 408 830 418 808 C 428 786 444 782 450 790 Z" fill="url(#calfHL)"/>
+
+  <!-- FEET -->
+  <ellipse cx="248" cy="912" rx="62" ry="14" fill="#200e08" transform="rotate(-6 248 912)"/>
+  <ellipse cx="448" cy="914" rx="66" ry="14" fill="#200e08" transform="rotate(4 448 914)"/>
+</g>
+
+<!-- ─── LAYER 3: CLOTHING ─── -->
+<!-- Training shorts (covers mid-thigh to hip) -->
+<path d="M 240 596 C 232 610 228 630 226 655 C 228 640 240 635 258 632 L 316 626 L 360 630 L 406 626 L 468 630 C 490 632 504 640 506 655 C 504 630 498 610 490 596 L 450 578 L 360 572 L 270 576 Z" fill="url(#shortsGrad)" opacity="0.95"/>
+<!-- Short leg left -->
+<path d="M 226 650 C 224 670 228 695 238 708 L 260 715 C 272 712 282 700 284 680 C 280 672 270 665 258 662 L 234 655 Z" fill="url(#shortsGrad)"/>
+<!-- Short leg right -->
+<path d="M 506 644 C 508 665 504 690 494 704 L 472 712 C 458 710 446 698 444 678 C 448 670 460 662 476 659 L 504 648 Z" fill="url(#shortsGrad)"/>
+
+<!-- Weightlifting belt -->
+<path d="M 245 558 C 238 570 236 582 238 596 L 250 608 L 360 614 L 472 608 L 482 594 C 484 580 480 568 474 558 L 450 550 L 360 546 L 268 548 Z" fill="url(#beltGrad)"/>
+<!-- Belt highlight edge -->
+<path d="M 245 558 C 268 548 360 546 450 550 L 474 558" fill="none" stroke="#3a3020" stroke-width="1.5"/>
+<!-- Belt buckle suggestion -->
+<rect x="340" y="550" width="40" height="18" rx="3" fill="#1e1a10"/>
+<rect x="344" y="553" width="32" height="12" rx="2" fill="#282018"/>
+
+<!-- ─── LAYER 4: MUSCLE DEFINITION ─── -->
+<!-- Trap ridge lines (two mounds of the traps) -->
+<path d="M 310 310 C 338 305 365 302 398 302 C 428 302 456 305 480 310" fill="none" stroke="#0e0806" stroke-width="3" opacity="0.8"/>
+<!-- Centre trap valley -->
+<path d="M 370 285 L 372 340 L 375 410" fill="none" stroke="#0e0806" stroke-width="2" opacity="0.6"/>
+
+<!-- Spine line (visible as erectors in bent position) -->
+<path d="M 370 345 C 368 390 366 440 364 490 C 362 535 358 575 356 605" fill="none" stroke="#0d0806" stroke-width="2.5" opacity="0.7"/>
+<!-- Left erector column -->
+<path d="M 356 350 C 352 400 348 455 344 505 C 342 540 340 570 340 602" fill="none" stroke="#150e08" stroke-width="2" opacity="0.5"/>
+<!-- Right erector column -->
+<path d="M 388 348 C 390 398 392 454 392 505 C 392 540 390 570 388 602" fill="none" stroke="#150e08" stroke-width="2" opacity="0.5"/>
+
+<!-- Lat edge (left) - the sweeping curve of the lat muscle -->
+<path d="M 205 370 C 185 398 175 440 182 478 C 186 500 200 514 220 514" fill="none" stroke="#0e0806" stroke-width="2.5" opacity="0.6"/>
+<!-- Lat edge (right) -->
+<path d="M 508 360 C 530 388 538 432 530 470 C 524 494 508 510 488 512" fill="none" stroke="#0e0806" stroke-width="2.5" opacity="0.6"/>
+
+<!-- Bicep peak line (left arm) -->
+<path d="M 240 424 C 232 448 228 478 230 508" fill="none" stroke="#0d0806" stroke-width="2" opacity="0.55"/>
+<!-- Bicep peak line (right arm) -->
+<path d="M 554 418 C 562 445 566 478 562 510" fill="none" stroke="#0d0806" stroke-width="2" opacity="0.55"/>
+
+<!-- Forearm extensor/flexor division (right arm - more visible) -->
+<path d="M 570 535 C 575 565 576 598 572 620" fill="none" stroke="#0e0806" stroke-width="1.8" opacity="0.55"/>
+
+<!-- VMO (teardrop quad, left leg) -->
+<path d="M 260 762 C 268 774 280 780 292 778" fill="none" stroke="#0e0806" stroke-width="2" opacity="0.5"/>
+<!-- VMO right leg -->
+<path d="M 444 758 C 436 770 424 778 412 776" fill="none" stroke="#0e0806" stroke-width="2" opacity="0.5"/>
+
+<!-- Quad separation (left) -->
+<path d="M 248 660 C 244 695 240 730 242 762" fill="none" stroke="#0e0806" stroke-width="1.8" opacity="0.45"/>
+<!-- Quad separation (right) -->
+<path d="M 468 654 C 472 690 476 726 472 758" fill="none" stroke="#0e0806" stroke-width="1.8" opacity="0.45"/>
+
+<!-- Glute separation -->
+<path d="M 358 610 C 360 625 362 640 362 658" fill="none" stroke="#0e0806" stroke-width="2" opacity="0.45"/>
+
+<!-- Calf head division (right) -->
+<path d="M 436 818 C 440 840 440 864 438 882" fill="none" stroke="#0e0806" stroke-width="1.5" opacity="0.5"/>
+
+<!-- ─── LAYER 5: MUSCLE HIGHLIGHTS (lighter skin on muscle peaks) ─── -->
+<!-- Trap highlight — the rounded peak of each trap mound -->
+<ellipse cx="312" cy="322" rx="48" ry="30" fill="#4a2818" opacity="0.50" filter="url(#subtleBlur)"/>
+<ellipse cx="462" cy="318" rx="52" ry="32" fill="#5a3020" opacity="0.55" filter="url(#subtleBlur)"/>
+<!-- Upper back centre highlight (rhomboid area) -->
+<ellipse cx="362" cy="428" rx="62" ry="45" fill="#3a2010" opacity="0.45" filter="url(#subtleBlur)"/>
+<!-- Lower back erector highlight -->
+<ellipse cx="355" cy="538" rx="40" ry="38" fill="#382010" opacity="0.40" filter="url(#subtleBlur)"/>
+<!-- Right deltoid peak -->
+<ellipse cx="568" cy="336" rx="36" ry="32" fill="#6a3818" opacity="0.60" filter="url(#subtleBlur)"/>
+<!-- Left deltoid peak -->
+<ellipse cx="226" cy="344" rx="32" ry="28" fill="#3a2010" opacity="0.40" filter="url(#subtleBlur)"/>
+<!-- Right bicep peak -->
+<ellipse cx="572" cy="438" rx="22" ry="38" fill="#5a3018" opacity="0.50" filter="url(#subtleBlur)"/>
+<!-- Left bicep peak -->
+<ellipse cx="230" cy="445" rx="18" ry="35" fill="#3a2010" opacity="0.40" filter="url(#subtleBlur)"/>
+<!-- Right forearm peak -->
+<ellipse cx="580" cy="575" rx="18" ry="48" fill="#4a2816" opacity="0.48" filter="url(#subtleBlur)"/>
+<!-- Right quad VMO highlight -->
+<ellipse cx="462" cy="722" rx="32" ry="28" fill="#502a14" opacity="0.48" filter="url(#subtleBlur)"/>
+<!-- Left quad highlight -->
+<ellipse cx="254" cy="718" rx="28" ry="25" fill="#3c2010" opacity="0.42" filter="url(#subtleBlur)"/>
+<!-- Right calf peak -->
+<ellipse cx="456" cy="832" rx="20" ry="35" fill="#402010" opacity="0.45" filter="url(#subtleBlur)"/>
+<!-- Face highlight (cheekbone/forehead side) -->
+<ellipse cx="380" cy="200" rx="26" ry="22" fill="#5a3018" opacity="0.45" filter="url(#subtleBlur)"/>
+
+<!-- ─── LAYER 6: VEIN DETAIL (arms) ─── -->
+<!-- Right forearm veins (suggest vascularity) -->
+<path d="M 568 542 C 572 560 576 582 574 606" fill="none" stroke="#3a1e0c" stroke-width="1.2" opacity="0.55"/>
+<path d="M 562 548 C 560 570 558 598 558 618" fill="none" stroke="#3a1e0c" stroke-width="1" opacity="0.45"/>
+<path d="M 576 555 C 580 578 580 600 578 618" fill="none" stroke="#3a1e0c" stroke-width="0.8" opacity="0.40"/>
+<!-- Left forearm -->
+<path d="M 216 538 C 212 560 210 588 212 610" fill="none" stroke="#321c0a" stroke-width="1" opacity="0.45"/>
+<!-- Hand veins right -->
+<path d="M 570 652 C 574 662 576 672 574 680" fill="none" stroke="#3a1e0c" stroke-width="0.9" opacity="0.50"/>
+
+<!-- ═══════════════════════════
+     RIM LIGHTING
+     Cool blue-white from upper-right backlight
+     Matches the cinematic reference aesthetic
+═══════════════════════════ -->
+<g fill="url(#rimH)" opacity="0.80" filter="url(#rimGlow)">
+  <!-- Right shoulder rim -->
+  <ellipse cx="560" cy="345" rx="58" ry="65" transform="rotate(-15 560 345)"/>
+  <!-- Right lat rim -->
+  <path d="M 498 362 C 522 382 532 422 528 460 C 524 488 506 508 482 510 L 435 508 L 438 458 L 452 415 Z"/>
+  <!-- Right upper arm rim -->
+  <path d="M 568 358 C 585 372 598 408 600 445 C 602 480 592 510 578 526 C 566 540 550 545 536 538 L 540 490 L 548 440 L 552 398 Z"/>
+  <!-- Right forearm rim -->
+  <path d="M 578 524 C 594 542 600 574 596 605 C 592 632 578 650 562 652 L 556 615 L 558 575 L 564 538 Z"/>
+  <!-- Right thigh rim -->
+  <path d="M 406 622 C 428 636 448 666 456 700 L 448 705 L 440 672 L 426 642 L 408 625 Z" opacity="0.65"/>
+  <!-- Right calf rim -->
+  <path d="M 450 790 C 466 810 474 840 472 868 L 458 862 L 450 836 L 444 804 Z" opacity="0.55"/>
+  <!-- Right trap edge -->
+  <path d="M 538 388 C 562 392 580 378 582 354 C 584 325 566 306 540 296 L 510 295 L 530 318 L 542 348 Z"/>
+  <!-- Head right rim -->
+  <path d="M 392 158 C 410 162 424 178 428 200 C 432 220 424 240 412 252 L 404 240 L 402 218 L 396 192 Z" opacity="0.65"/>
+</g>
+
+<!-- Warm orange rim accent on top of cool blue (secondary bounce light) -->
+<g fill="url(#rimHWarm)" opacity="0.40" filter="url(#softBlur)">
+  <ellipse cx="560" cy="345" rx="58" ry="65" transform="rotate(-15 560 345)"/>
+  <path d="M 568 358 C 585 372 598 408 600 445 C 602 480 592 510 578 526 L 570 498 L 560 440 L 555 385 Z"/>
+</g>
+
+<!-- ═══════════════════
+     BARBELL
+═══════════════════ -->
+<!-- Bar shaft -->
+<rect x="30" y="672" width="660" height="18" rx="9" fill="url(#barGrad)"/>
+<!-- Knurling central grip area -->
+<rect x="185" y="674" width="350" height="5" rx="1" fill="#353535" opacity="0.6"/>
+<rect x="185" y="682" width="350" height="3" rx="1" fill="#1e1e1e" opacity="0.5"/>
+<!-- End knurling (left) -->
+<rect x="42"  y="674" width="80"  height="4" rx="1" fill="#2e2e2e" opacity="0.5"/>
+<!-- End knurling (right) -->
+<rect x="598" y="674" width="80"  height="4" rx="1" fill="#2e2e2e" opacity="0.5"/>
+
+<!-- Left collar -->
+<rect x="160" y="660" width="25" height="42" rx="5" fill="#232323"/>
+<rect x="162" y="662" width="21" height="38" rx="4" fill="#2e2e2e"/>
+<!-- Right collar -->
+<rect x="535" y="660" width="25" height="42" rx="5" fill="#232323"/>
+<rect x="537" y="662" width="21" height="38" rx="4" fill="#2e2e2e"/>
+
+<!-- LEFT PLATES (front faces, 3/4 view) -->
+<!-- 45lb outer -->
+<ellipse cx="96"  cy="681" rx="26" ry="80" fill="url(#plateGrad)"/>
+<ellipse cx="96"  cy="681" rx="26" ry="80" fill="url(#plateShine)"/>
+<ellipse cx="96"  cy="681" rx="20" ry="66" fill="none" stroke="#202020" stroke-width="2"/>
+<ellipse cx="96"  cy="681" rx="7"  ry="7"  fill="#141414"/>
+<!-- 45lb inner -->
+<ellipse cx="120" cy="681" rx="24" ry="78" fill="url(#plateGrad)"/>
+<ellipse cx="120" cy="681" rx="24" ry="78" fill="url(#plateShine)" opacity="0.7"/>
+<ellipse cx="120" cy="681" rx="18" ry="64" fill="none" stroke="#1c1c1c" stroke-width="1.5"/>
+<!-- 25lb -->
+<ellipse cx="142" cy="681" rx="19" ry="64" fill="url(#plateGrad)"/>
+<ellipse cx="142" cy="681" rx="13" ry="50" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+<!-- 10lb -->
+<ellipse cx="158" cy="681" rx="14" ry="50" fill="url(#plateGrad)"/>
+
+<!-- RIGHT PLATES -->
+<ellipse cx="624" cy="681" rx="26" ry="80" fill="url(#plateGrad)"/>
+<ellipse cx="624" cy="681" rx="26" ry="80" fill="url(#plateShine)"/>
+<ellipse cx="624" cy="681" rx="20" ry="66" fill="none" stroke="#202020" stroke-width="2"/>
+<ellipse cx="624" cy="681" rx="7"  ry="7"  fill="#141414"/>
+<ellipse cx="600" cy="681" rx="24" ry="78" fill="url(#plateGrad)"/>
+<ellipse cx="600" cy="681" rx="24" ry="78" fill="url(#plateShine)" opacity="0.7"/>
+<ellipse cx="600" cy="681" rx="18" ry="64" fill="none" stroke="#1c1c1c" stroke-width="1.5"/>
+<ellipse cx="578" cy="681" rx="19" ry="64" fill="url(#plateGrad)"/>
+<ellipse cx="578" cy="681" rx="13" ry="50" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+<ellipse cx="562" cy="681" rx="14" ry="50" fill="url(#plateGrad)"/>
+
+<!-- Plate rim highlight (catches the backlight) -->
+<path d="M 70 608 C 78 600 84 600 90 608" fill="none" stroke="#3a3a3a" stroke-width="1.5" opacity="0.6"/>
+<path d="M 650 608 C 642 600 636 600 630 608" fill="none" stroke="#3a3a3a" stroke-width="1.5" opacity="0.6"/>
+
+<!-- ═══════════════════
+     ATMOSPHERE / FINISH
+═══════════════════ -->
+<!-- Ground shadow directly under lifter -->
+<ellipse cx="348" cy="916" rx="198" ry="12" fill="#000" opacity="0.75" filter="url(#groundBlur)"/>
+<!-- Top vignette -->
+<rect x="0" y="0" width="720" height="120" fill="url(#atmoGrad)" opacity="0.70"/>
+<!-- Bottom floor dark -->
+<rect x="0" y="900" width="720" height="60" fill="#010305" opacity="0.85"/>
+</svg>
