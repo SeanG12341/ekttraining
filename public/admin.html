@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>EKT Training — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <!-- Quill rich text editor -->
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1A3A8F;
+      --navy-d: #122d72;
+      --navy-l: #4a7fe8;
+      --bg:     #05080f;
+      --bg2:    #070c18;
+      --panel:  #0a1120;
+      --white:  #ffffff;
+      --w70:    rgba(255,255,255,0.70);
+      --w55:    rgba(255,255,255,0.55);
+      --w40:    rgba(255,255,255,0.40);
+      --w25:    rgba(255,255,255,0.25);
+      --w15:    rgba(255,255,255,0.15);
+      --w08:    rgba(255,255,255,0.08);
+      --w05:    rgba(255,255,255,0.05);
+      --ok:     #2fbf71;
+      --err:    #e5484d;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a { color: var(--navy-l); }
+    .hidden { display: none !important; }
+
+    /* ─── Top bar ─── */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 32px; border-bottom: 1px solid var(--w05);
+      background: rgba(5,8,15,0.9); position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(20px);
+    }
+    .topbar__logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+    .topbar__box  { width: 11px; height: 11px; background: var(--navy-l); border-radius: 2px; }
+    .topbar__text { font-size: 11px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--white); }
+    .topbar__text em { font-style: normal; color: var(--w40); }
+    .topbar__right { display: flex; align-items: center; gap: 18px; }
+    .topbar__user { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--w40); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      border: none; cursor: pointer; border-radius: 3px;
+      transition: transform .15s, background .18s, color .18s, border-color .18s, box-shadow .2s, opacity .18s;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn--navy  { background: var(--navy); color: #fff; padding: 12px 22px; }
+    .btn--navy:hover:not(:disabled) { background: var(--navy-d); transform: translateY(-1px); box-shadow: 0 6px 22px rgba(26,58,143,0.45); }
+    .btn--outline { background: transparent; border: 1px solid var(--w15); color: var(--w55); padding: 11px 20px; }
+    .btn--outline:hover:not(:disabled) { border-color: var(--w40); color: #fff; }
+    .btn--ghost { background: transparent; color: var(--w40); padding: 10px 14px; }
+    .btn--ghost:hover:not(:disabled) { color: #fff; }
+    .btn--danger { background: transparent; border: 1px solid rgba(229,72,77,0.4); color: #e98a8d; padding: 9px 14px; }
+    .btn--danger:hover:not(:disabled) { background: rgba(229,72,77,0.1); color: #fff; }
+
+    /* ─── Login ─── */
+    .login-wrap { min-height: calc(100vh - 60px); display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+    .login-card { width: 100%; max-width: 380px; background: var(--panel); border: 1px solid var(--w08); border-radius: 8px; padding: 40px 34px; }
+    .login-card h1 { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 0.03em; text-transform: uppercase; margin-bottom: 6px; }
+    .login-card p.sub { font-size: 12px; color: var(--w40); margin-bottom: 28px; }
+
+    label.field-label { display: block; font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--navy-l); opacity: 0.85; margin-bottom: 9px; }
+    .field { margin-bottom: 20px; }
+    input[type=text], input[type=password], input[type=url], textarea, select {
+      width: 100%; background: var(--bg2); border: 1px solid var(--w08);
+      color: var(--white); font-family: 'Inter', sans-serif; font-size: 14px;
+      padding: 12px 14px; border-radius: 4px; transition: border-color .18s, box-shadow .18s;
+    }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: rgba(74,127,232,0.6); box-shadow: 0 0 0 3px rgba(74,127,232,0.12); }
+    textarea { resize: vertical; line-height: 1.6; }
+    select option { background: var(--bg2); }
+    .hint { font-size: 11px; color: var(--w25); margin-top: 7px; line-height: 1.5; }
+
+    /* ─── Editor layout ─── */
+    .editor { max-width: 1100px; margin: 0 auto; padding: 40px 32px 120px; }
+    .editor__head { margin-bottom: 32px; }
+    .editor__eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.42em; text-transform: uppercase; color: var(--navy-l); opacity: 0.7; margin-bottom: 12px; }
+    .editor__title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; line-height: 0.95; letter-spacing: 0.02em; text-transform: uppercase; }
+    .editor__sub { font-size: 13px; color: var(--w40); margin-top: 10px; }
+
+    .grid { display: grid; grid-template-columns: 340px 1fr; gap: 30px; align-items: start; }
+    .card { background: var(--panel); border: 1px solid var(--w08); border-radius: 8px; padding: 26px; }
+    .card + .card { margin-top: 24px; }
+    .card__title { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--w55); margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--w05); }
+
+    /* Image uploader */
+    .img-preview {
+      position: relative; width: 100%; aspect-ratio: 3/4; border-radius: 6px; overflow: hidden;
+      border: 1px dashed var(--w15); background: var(--bg2);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+    }
+    .img-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .img-preview__empty { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--w25); text-align: center; padding: 20px; }
+    .img-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    input[type=file] { display: none; }
+
+    /* Rich text */
+    .ql-toolbar.ql-snow, .ql-container.ql-snow { border-color: var(--w08) !important; }
+    .ql-toolbar.ql-snow { border-radius: 4px 4px 0 0; background: var(--bg2); }
+    .ql-container.ql-snow { border-radius: 0 0 4px 4px; background: var(--bg2); font-family: 'Inter', sans-serif; font-size: 14px; }
+    .ql-editor { min-height: 180px; color: var(--white); line-height: 1.7; }
+    .ql-editor.ql-blank::before { color: var(--w25); font-style: normal; }
+    .ql-snow .ql-stroke { stroke: var(--w55); }
+    .ql-snow .ql-fill { fill: var(--w55); }
+    .ql-snow .ql-picker { color: var(--w55); }
+    .ql-snow.ql-toolbar button:hover .ql-stroke, .ql-snow .ql-toolbar button:hover .ql-stroke { stroke: #fff; }
+    .ql-snow .ql-picker-options { background: var(--panel); }
+
+    /* Socials */
+    .social-row { display: grid; grid-template-columns: 150px 1fr auto; gap: 10px; margin-bottom: 12px; align-items: center; }
+    .social-row select { padding: 10px 12px; font-size: 13px; }
+    .social-empty { font-size: 12px; color: var(--w25); margin-bottom: 14px; }
+
+    /* Sticky action bar */
+    .actionbar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
+      background: rgba(7,12,24,0.94); backdrop-filter: blur(20px);
+      border-top: 1px solid var(--w08); padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .actionbar__status { font-size: 11px; color: var(--w40); letter-spacing: 0.04em; }
+    .actionbar__btns { display: flex; gap: 12px; }
+
+    /* Toast */
+    .toast-wrap { position: fixed; top: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 10px; }
+    .toast {
+      min-width: 240px; max-width: 360px; padding: 14px 16px; border-radius: 6px;
+      font-size: 13px; line-height: 1.5; color: #fff; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      display: flex; align-items: flex-start; gap: 10px;
+      animation: toastIn .25s cubic-bezier(0.16,1,0.3,1);
+      border: 1px solid var(--w08);
+    }
+    .toast--ok  { background: #10261a; border-color: rgba(47,191,113,0.4); }
+    .toast--err { background: #2a1214; border-color: rgba(229,72,77,0.45); }
+    .toast__dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+    .toast--ok .toast__dot { background: var(--ok); }
+    .toast--err .toast__dot { background: var(--err); }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+
+    .spinner { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Section tabs ─── */
+    .tabs {
+      display: flex; gap: 6px; padding: 14px 32px 0;
+      max-width: 1100px; margin: 0 auto;
+      border-bottom: 1px solid var(--w05);
+    }
+    .tab {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: none; border: none; cursor: pointer;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--w40); padding: 12px 18px 14px;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: color .18s, border-color .18s;
+    }
+    .tab:hover { color: var(--white); }
+    .tab--active { color: var(--white); border-bottom-color: var(--navy-l); }
+    .tab__badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 18px; height: 18px; padding: 0 5px; border-radius: 100px;
+      background: var(--navy-l); color: #fff;
+      font-size: 10px; font-weight: 700; letter-spacing: 0;
+    }
+
+    /* ─── Tier editor cards ─── */
+    .tier-card { background: var(--panel); border: 1px solid var(--w08); border-radius: 8px; padding: 24px; margin-bottom: 18px; }
+    .tier-card__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--w05); }
+    .tier-card__label { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--w55); }
+    .tier-card__tools { display: flex; gap: 8px; }
+    .tier-card__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .tier-card .field { margin-bottom: 16px; }
+    .tier-check { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--w55); cursor: pointer; user-select: none; }
+    .tier-check input { width: auto; accent-color: var(--navy-l); cursor: pointer; }
+    .btn--icon { background: transparent; border: 1px solid var(--w15); color: var(--w55); padding: 8px 11px; font-size: 12px; letter-spacing: 0; }
+    .btn--icon:hover:not(:disabled) { border-color: var(--w40); color: #fff; }
+
+    /* ─── Consult inbox ─── */
+    .inbox-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 20px; }
+    .inbox-count { font-size: 12px; color: var(--w40); }
+    .consult {
+      background: var(--panel); border: 1px solid var(--w08); border-radius: 8px;
+      padding: 20px 22px; margin-bottom: 14px;
+    }
+    .consult--unread { border-left: 3px solid var(--navy-l); background: rgba(26,58,143,0.07); }
+    .consult__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+    .consult__name { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 9px; }
+    .consult__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--navy-l); flex-shrink: 0; }
+    .consult__date { font-size: 11px; color: var(--w25); letter-spacing: 0.04em; }
+    .consult__contact { display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; margin-bottom: 10px; }
+    .consult__contact a { color: var(--navy-l); text-decoration: none; }
+    .consult__contact a:hover { text-decoration: underline; }
+    .consult__msg { font-size: 13px; line-height: 1.7; color: var(--w70); white-space: pre-wrap; margin-bottom: 14px; }
+    .consult__msg--empty { color: var(--w25); font-style: italic; }
+    .consult__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .inbox-empty { text-align: center; padding: 60px 20px; color: var(--w25); font-size: 13px; letter-spacing: 0.06em; }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      .editor { padding: 28px 20px 120px; }
+      .topbar { padding: 14px 20px; }
+      .social-row { grid-template-columns: 1fr; }
+      .tabs { padding: 10px 20px 0; overflow-x: auto; }
+      .tier-card__row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/" class="topbar__logo" target="_blank" rel="noopener">
+    <span class="topbar__box"></span>
+    <span class="topbar__text">EKT <em>/</em> Admin</span>
+  </a>
+  <div class="topbar__right">
+    <span class="topbar__user hidden" id="userLabel"></span>
+    <a href="/" target="_blank" rel="noopener" class="btn btn--ghost">View site ↗</a>
+    <button class="btn btn--outline hidden" id="logoutBtn">Log out</button>
+  </div>
+</div>
+
+<!-- ─── SECTION TABS (visible when signed in) ─── -->
+<nav class="tabs hidden" id="tabsNav" aria-label="Admin sections">
+  <button type="button" class="tab tab--active" data-tab="about">About</button>
+  <button type="button" class="tab" data-tab="pricing">Pricing</button>
+  <button type="button" class="tab" data-tab="inbox">Consult Requests <span class="tab__badge hidden" id="inboxBadge">0</span></button>
+  <button type="button" class="tab" data-tab="settings">Settings</button>
+</nav>
+
+<!-- ─── LOGIN ─── -->
+<section class="login-wrap" id="loginView">
+  <form class="login-card" id="loginForm" autocomplete="on">
+    <h1>Sign In</h1>
+    <p class="sub">Sign in to manage the site.</p>
+    <div class="field">
+      <label class="field-label" for="loginEmail">Email</label>
+      <input type="text" id="loginEmail" name="email" autocomplete="username" inputmode="email" required />
+    </div>
+    <div class="field">
+      <label class="field-label" for="loginPass">Password</label>
+      <input type="password" id="loginPass" name="password" autocomplete="current-password" required />
+    </div>
+    <p class="hint" id="loginError" style="color:var(--err); min-height:16px; margin:-8px 0 14px;"></p>
+    <button type="submit" class="btn btn--navy" id="loginBtn" style="width:100%; justify-content:center; padding:14px;">Sign In</button>
+  </form>
+</section>
+
+<!-- ─── FORCED PASSWORD CHANGE (first login with a temporary password) ─── -->
+<section class="login-wrap hidden" id="mustChangeView">
+  <form class="login-card" id="mustChangeForm">
+    <h1>Set a new password</h1>
+    <p class="sub">You signed in with a temporary password. Choose your own password to continue.</p>
+    <div class="field">
+      <label class="field-label" for="mcCurrent">Temporary password</label>
+      <input type="password" id="mcCurrent" autocomplete="current-password" required />
+    </div>
+    <div class="field">
+      <label class="field-label" for="mcNew">New password</label>
+      <input type="password" id="mcNew" autocomplete="new-password" minlength="8" required />
+      <p class="hint">At least 8 characters.</p>
+    </div>
+    <div class="field">
+      <label class="field-label" for="mcConfirm">Confirm new password</label>
+      <input type="password" id="mcConfirm" autocomplete="new-password" minlength="8" required />
+    </div>
+    <p class="hint" id="mcError" style="color:var(--err); min-height:16px; margin:-8px 0 14px;"></p>
+    <button type="submit" class="btn btn--navy" id="mcBtn" style="width:100%; justify-content:center; padding:14px;">Save password</button>
+  </form>
+</section>
+
+<!-- ─── EDITOR ─── -->
+<main class="editor hidden" id="editorView">
+  <div class="editor__head">
+    <p class="editor__eyebrow">Content Manager</p>
+    <h1 class="editor__title">About Section</h1>
+    <p class="editor__sub">Update the image, headline, story, links and button shown in the site's About section. Changes go live as soon as you save.</p>
+  </div>
+
+  <form id="aboutForm">
+    <div class="grid">
+      <!-- Left: image -->
+      <div>
+        <div class="card">
+          <div class="card__title">Section Image</div>
+          <div class="img-preview" id="imgPreview">
+            <div class="img-preview__empty" id="imgEmpty">No image set —<br>the section will show text only.</div>
+            <img id="imgTag" class="hidden" alt="Preview" />
+          </div>
+          <input type="file" id="imgInput" accept="image/jpeg,image/png,image/webp,image/gif" />
+          <div class="img-actions">
+            <button type="button" class="btn btn--outline" id="chooseImgBtn">Choose image</button>
+            <button type="button" class="btn btn--danger hidden" id="removeImgBtn">Remove</button>
+          </div>
+          <p class="hint">JPG, PNG, WEBP or GIF · up to 8 MB. Images are automatically resized and converted to WebP for fast loading.</p>
+        </div>
+      </div>
+
+      <!-- Right: text fields -->
+      <div>
+        <div class="card">
+          <div class="card__title">Headline</div>
+          <div class="field">
+            <label class="field-label" for="eyebrow">Eyebrow (small label)</label>
+            <input type="text" id="eyebrow" maxlength="120" placeholder="The Trainer" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label class="field-label" for="title">Title</label>
+            <textarea id="title" rows="3" placeholder="Elijah&#10;*King*&#10;Turner"></textarea>
+            <p class="hint">Each line becomes a new line in the title. Wrap a word in *asterisks* to highlight it in blue — e.g. <code>*King*</code>.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card__title">Body Text</div>
+          <div id="quillEditor"></div>
+          <p class="hint">Write one or more paragraphs. Use the toolbar for bold, italics, lists and links.</p>
+        </div>
+
+        <div class="card">
+          <div class="card__title">Call-to-action Button <span style="color:var(--w25); font-weight:500; letter-spacing:0; text-transform:none;">(optional)</span></div>
+          <div class="field">
+            <label class="field-label" for="ctaLabel">Button label</label>
+            <input type="text" id="ctaLabel" maxlength="60" placeholder="Work With Me" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label class="field-label" for="ctaUrl">Button link</label>
+            <input type="text" id="ctaUrl" placeholder="#contact" />
+            <p class="hint">Use <code>#contact</code> to jump to a section, or a full URL. Leave the label blank to hide the button.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card__title">Social Links <span style="color:var(--w25); font-weight:500; letter-spacing:0; text-transform:none;">(optional)</span></div>
+          <div id="socialList"></div>
+          <p class="social-empty hidden" id="socialEmpty">No social links added yet.</p>
+          <button type="button" class="btn btn--outline" id="addSocialBtn">+ Add link</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</main>
+
+<!-- ─── PRICING EDITOR ─── -->
+<main class="editor hidden" id="pricingView">
+  <div class="editor__head">
+    <p class="editor__eyebrow">Content Manager</p>
+    <h1 class="editor__title">Choose Your Level</h1>
+    <p class="editor__sub">Edit, add, reorder or delete the pricing levels shown on the site. Changes go live as soon as you save.</p>
+  </div>
+
+  <div id="tierList"></div>
+
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-top:8px;">
+    <button type="button" class="btn btn--outline" id="addTierBtn">+ Add level</button>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <button type="button" class="btn btn--outline" id="cancelTiersBtn">Discard changes</button>
+      <button type="button" class="btn btn--navy" id="saveTiersBtn">Save pricing</button>
+    </div>
+  </div>
+</main>
+
+<!-- ─── CONSULT REQUESTS INBOX ─── -->
+<main class="editor hidden" id="inboxView">
+  <div class="editor__head">
+    <p class="editor__eyebrow">Inbox</p>
+    <h1 class="editor__title">Consult Requests</h1>
+    <p class="editor__sub">Requests submitted through the "Book a Consult" form on the site, newest first.</p>
+  </div>
+
+  <div class="inbox-toolbar">
+    <span class="inbox-count" id="inboxCount">Loading…</span>
+    <button type="button" class="btn btn--outline" id="refreshInboxBtn">Refresh</button>
+  </div>
+
+  <div id="consultList"></div>
+</main>
+
+<!-- ─── SETTINGS ─── -->
+<main class="editor hidden" id="settingsView">
+  <div class="editor__head">
+    <p class="editor__eyebrow">Account</p>
+    <h1 class="editor__title">Settings</h1>
+    <p class="editor__sub">Change your password and manage who can sign in as an admin.</p>
+  </div>
+
+  <div class="card" style="max-width:520px;">
+    <div class="card__title">Change your password</div>
+    <form id="pwForm">
+      <div class="field">
+        <label class="field-label" for="pwCurrent">Current password</label>
+        <input type="password" id="pwCurrent" autocomplete="current-password" required />
+      </div>
+      <div class="field">
+        <label class="field-label" for="pwNew">New password</label>
+        <input type="password" id="pwNew" autocomplete="new-password" minlength="8" required />
+        <p class="hint">At least 8 characters.</p>
+      </div>
+      <div class="field">
+        <label class="field-label" for="pwConfirm">Confirm new password</label>
+        <input type="password" id="pwConfirm" autocomplete="new-password" minlength="8" required />
+      </div>
+      <button type="submit" class="btn btn--navy" id="pwBtn">Update password</button>
+    </form>
+  </div>
+
+  <div class="card" style="max-width:520px; margin-top:24px;">
+    <div class="card__title">Admin accounts</div>
+    <div id="adminList"></div>
+    <form id="addAdminForm" style="margin-top:18px; padding-top:18px; border-top:1px solid var(--w05);">
+      <div class="field">
+        <label class="field-label" for="newAdminEmail">Add an admin by email</label>
+        <input type="text" id="newAdminEmail" inputmode="email" placeholder="name@example.com" />
+        <p class="hint">They'll get a one-time temporary password (shown to you once) and must set their own password on first sign-in.</p>
+      </div>
+      <button type="submit" class="btn btn--outline" id="addAdminBtn">+ Add admin</button>
+    </form>
+    <div id="tempPassBox" class="hidden" style="margin-top:16px; padding:14px 16px; background:rgba(47,191,113,0.08); border:1px solid rgba(47,191,113,0.35); border-radius:6px; font-size:13px; line-height:1.6;"></div>
+  </div>
+</main>
+
+<!-- Sticky save bar -->
+<div class="actionbar hidden" id="actionbar">
+  <span class="actionbar__status" id="saveStatus">Last saved: —</span>
+  <div class="actionbar__btns">
+    <button type="button" class="btn btn--outline" id="cancelBtn">Cancel</button>
+    <button type="button" class="btn btn--navy" id="saveBtn">Save changes</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const SOCIAL_PLATFORMS = ['instagram', 'x', 'youtube', 'facebook', 'tiktok', 'linkedin', 'website'];
+
+  const el = (id) => document.getElementById(id);
+  const loginView  = el('loginView');
+  const editorView = el('editorView');
+  const actionbar  = el('actionbar');
+  const tabsNav    = el('tabsNav');
+
+  let authed = false;
+
+  /* ─── CSRF: echo the security cookie back on every mutating request ─── */
+  function csrfToken() {
+    const m = document.cookie.match(/(?:^|;\s*)ekt\.csrf=([^;]+)/);
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+
+  /* ─── Section tabs (deep-linkable via #about / #pricing / #inbox / #settings) ─── */
+  const views = { about: editorView, pricing: el('pricingView'), inbox: el('inboxView'), settings: el('settingsView') };
+  let activeTab = Object.prototype.hasOwnProperty.call(views, location.hash.slice(1)) ? location.hash.slice(1) : 'about';
+
+  function switchTab(name) {
+    activeTab = name;
+    if (('#' + name) !== location.hash) history.replaceState(null, '', '#' + name);
+    tabsNav.querySelectorAll('.tab').forEach((t) => t.classList.toggle('tab--active', t.dataset.tab === name));
+    Object.keys(views).forEach((k) => views[k].classList.toggle('hidden', k !== name));
+    actionbar.classList.toggle('hidden', name !== 'about');
+    if (name === 'inbox') loadInbox();
+    if (name === 'settings') loadAdmins();
+  }
+  tabsNav.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+
+  let quill = null;
+  let currentImagePath = null;   // path stored on server
+  let pendingFile = null;        // newly chosen File (not yet saved)
+  let removeImage = false;       // user asked to remove the existing image
+
+  /* ─── Toast notifications ─── */
+  function toast(message, type) {
+    const wrap = el('toastWrap');
+    const t = document.createElement('div');
+    t.className = 'toast toast--' + (type === 'error' ? 'err' : 'ok');
+    t.innerHTML = '<span class="toast__dot"></span><span></span>';
+    t.querySelector('span:last-child').textContent = message;
+    wrap.appendChild(t);
+    setTimeout(() => {
+      t.style.transition = 'opacity .3s, transform .3s';
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(20px)';
+      setTimeout(() => t.remove(), 300);
+    }, type === 'error' ? 5000 : 3200);
+  }
+
+  /* ─── Title <-> textarea conversion ─── */
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function titleToHtml(text) {
+    // asterisks → <em> (accent), newlines → <br>
+    return escapeHtml(text.trim())
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+      .replace(/\r?\n/g, '<br>');
+  }
+  function htmlToTitle(html) {
+    return String(html || '')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<em>(.*?)<\/em>/gi, '*$1*')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  }
+
+  /* ─── Image handling ─── */
+  function showImage(src) {
+    el('imgTag').src = src;
+    el('imgTag').classList.remove('hidden');
+    el('imgEmpty').classList.add('hidden');
+    el('removeImgBtn').classList.remove('hidden');
+  }
+  function clearImagePreview() {
+    el('imgTag').classList.add('hidden');
+    el('imgTag').removeAttribute('src');
+    el('imgEmpty').classList.remove('hidden');
+    el('removeImgBtn').classList.add('hidden');
+  }
+
+  el('chooseImgBtn').addEventListener('click', () => el('imgInput').click());
+  el('imgInput').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowed.includes(file.type)) {
+      toast('Unsupported file type. Use JPG, PNG, WEBP or GIF.', 'error');
+      e.target.value = '';
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast('Image is too large. Maximum size is 8 MB.', 'error');
+      e.target.value = '';
+      return;
+    }
+    pendingFile = file;
+    removeImage = false;
+    showImage(URL.createObjectURL(file));
+  });
+  el('removeImgBtn').addEventListener('click', () => {
+    pendingFile = null;
+    removeImage = true;
+    el('imgInput').value = '';
+    clearImagePreview();
+  });
+
+  /* ─── Social links ─── */
+  function addSocialRow(platform, url) {
+    const list = el('socialList');
+    const row = document.createElement('div');
+    row.className = 'social-row';
+    const sel = document.createElement('select');
+    SOCIAL_PLATFORMS.forEach((p) => {
+      const opt = document.createElement('option');
+      opt.value = p;
+      opt.textContent = p.charAt(0).toUpperCase() + p.slice(1);
+      if (p === platform) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'https://instagram.com/yourhandle';
+    input.value = url || '';
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'btn btn--danger';
+    del.textContent = 'Remove';
+    del.addEventListener('click', () => { row.remove(); refreshSocialEmpty(); });
+    row.appendChild(sel); row.appendChild(input); row.appendChild(del);
+    list.appendChild(row);
+    refreshSocialEmpty();
+  }
+  function refreshSocialEmpty() {
+    const has = el('socialList').children.length > 0;
+    el('socialEmpty').classList.toggle('hidden', has);
+  }
+  function collectSocials() {
+    return Array.from(el('socialList').children).map((row) => ({
+      platform: row.querySelector('select').value,
+      url: row.querySelector('input').value.trim(),
+    })).filter((s) => s.url);
+  }
+  el('addSocialBtn').addEventListener('click', () => addSocialRow('instagram', ''));
+
+  /* ─── Populate the form from stored data ─── */
+  function fillForm(data) {
+    el('eyebrow').value = data.eyebrow || '';
+    el('title').value = htmlToTitle(data.title_html);
+    quill.root.innerHTML = data.body_html || '';
+    el('ctaLabel').value = data.cta_label || '';
+    el('ctaUrl').value = data.cta_url || '';
+
+    currentImagePath = data.image_path || null;
+    pendingFile = null;
+    removeImage = false;
+    el('imgInput').value = '';
+    if (currentImagePath) showImage(currentImagePath); else clearImagePreview();
+
+    el('socialList').innerHTML = '';
+    (data.socials || []).forEach((s) => addSocialRow(s.platform, s.url));
+    refreshSocialEmpty();
+
+    if (data.updated_at) {
+      el('saveStatus').textContent = 'Last saved: ' + new Date(data.updated_at).toLocaleString();
+    } else {
+      el('saveStatus').textContent = 'Showing default content — not saved yet.';
+    }
+  }
+
+  /* ─── Load current About content ─── */
+  function loadAbout() {
+    return fetch('/api/about', { headers: { Accept: 'application/json' } })
+      .then((r) => r.json())
+      .then(fillForm);
+  }
+
+  /* ─── Save ─── */
+  function setSaving(saving) {
+    const btn = el('saveBtn');
+    btn.disabled = saving;
+    btn.innerHTML = saving ? '<span class="spinner"></span> Saving…' : 'Save changes';
+  }
+
+  el('saveBtn').addEventListener('click', () => {
+    const fd = new FormData();
+    fd.append('eyebrow', el('eyebrow').value.trim());
+    fd.append('title_html', titleToHtml(el('title').value));
+    // Quill leaves an empty paragraph when blank — normalize that away.
+    let body = quill.root.innerHTML.trim();
+    if (body === '<p><br></p>') body = '';
+    fd.append('body_html', body);
+    fd.append('cta_label', el('ctaLabel').value.trim());
+    fd.append('cta_url', el('ctaUrl').value.trim());
+    fd.append('socials', JSON.stringify(collectSocials()));
+    if (pendingFile) {
+      fd.append('image', pendingFile);
+    } else if (removeImage) {
+      fd.append('remove_image', 'true');
+    }
+
+    setSaving(true);
+    fetch('/api/admin/about', { method: 'PUT', body: fd, credentials: 'same-origin', headers: { 'X-CSRF-Token': csrfToken() } })
+      .then(async (r) => {
+        const payload = await r.json().catch(() => ({}));
+        if (r.status === 401) { showLogin(); throw new Error('Your session expired. Please sign in again.'); }
+        if (!r.ok) throw new Error(payload.error || 'Save failed.');
+        return payload;
+      })
+      .then((payload) => {
+        fillForm(payload.about);
+        toast('Saved — your changes are now live on the site.', 'ok');
+      })
+      .catch((err) => toast(err.message || 'Save failed.', 'error'))
+      .finally(() => setSaving(false));
+  });
+
+  el('cancelBtn').addEventListener('click', () => {
+    loadAbout().then(() => toast('Changes discarded.', 'ok'));
+  });
+
+  /* ─── Pricing tier editor ─── */
+  const TIER_FIELDS = ['name', 'badge', 'price_text', 'cta_label', 'description', 'features'];
+
+  function addTierCard(t) {
+    t = t || { name: '', badge: '', price_text: 'Contact for pricing', description: '', features: [], cta_label: 'Get Started', featured: false };
+    const card = document.createElement('div');
+    card.className = 'tier-card';
+    card.innerHTML =
+      '<div class="tier-card__head">' +
+        '<span class="tier-card__label">Level</span>' +
+        '<div class="tier-card__tools">' +
+          '<button type="button" class="btn btn--icon" data-act="up" title="Move up">&#8593;</button>' +
+          '<button type="button" class="btn btn--icon" data-act="down" title="Move down">&#8595;</button>' +
+          '<button type="button" class="btn btn--danger" data-act="del">Delete</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="tier-card__row">' +
+        '<div class="field"><label class="field-label">Name</label><input type="text" data-f="name" maxlength="60" placeholder="Starter" /></div>' +
+        '<div class="field"><label class="field-label">Badge (optional)</label><input type="text" data-f="badge" maxlength="40" placeholder="Most Popular" /></div>' +
+      '</div>' +
+      '<div class="tier-card__row">' +
+        '<div class="field"><label class="field-label">Pricing text</label><input type="text" data-f="price_text" maxlength="80" placeholder="Contact for pricing &middot; or e.g. $199 / month" /></div>' +
+        '<div class="field"><label class="field-label">Button label</label><input type="text" data-f="cta_label" maxlength="40" placeholder="Get Started" /></div>' +
+      '</div>' +
+      '<div class="field"><label class="field-label">Description</label><textarea data-f="description" rows="2" maxlength="400" placeholder="Who is this level for?"></textarea></div>' +
+      '<div class="field"><label class="field-label">Bullet points &mdash; one per line</label><textarea data-f="features" rows="4" placeholder="Personalized workout plan\nEmail support"></textarea></div>' +
+      '<label class="tier-check"><input type="checkbox" data-f="featured" /> Highlight this level (&ldquo;Most Popular&rdquo; card style)</label>';
+
+    // Set values via properties so stored content can never inject markup.
+    card.querySelector('[data-f="name"]').value = t.name || '';
+    card.querySelector('[data-f="badge"]').value = t.badge || '';
+    card.querySelector('[data-f="price_text"]').value = t.price_text || '';
+    card.querySelector('[data-f="cta_label"]').value = t.cta_label || '';
+    card.querySelector('[data-f="description"]').value = t.description || '';
+    card.querySelector('[data-f="features"]').value = (t.features || []).join('\n');
+    card.querySelector('[data-f="featured"]').checked = !!t.featured;
+
+    card.querySelector('[data-act="del"]').addEventListener('click', () => card.remove());
+    card.querySelector('[data-act="up"]').addEventListener('click', () => {
+      const prev = card.previousElementSibling;
+      if (prev) card.parentNode.insertBefore(card, prev);
+    });
+    card.querySelector('[data-act="down"]').addEventListener('click', () => {
+      const next = card.nextElementSibling;
+      if (next) card.parentNode.insertBefore(next, card);
+    });
+
+    el('tierList').appendChild(card);
+    return card;
+  }
+
+  function fillTiers(tiers) {
+    el('tierList').innerHTML = '';
+    (tiers || []).forEach(addTierCard);
+  }
+
+  function collectTiers() {
+    return Array.from(el('tierList').children).map((card) => {
+      const get = (f) => card.querySelector('[data-f="' + f + '"]').value.trim();
+      return {
+        name: get('name'),
+        badge: get('badge'),
+        price_text: get('price_text'),
+        cta_label: get('cta_label'),
+        description: get('description'),
+        features: get('features').split('\n').map((s) => s.trim()).filter(Boolean),
+        featured: card.querySelector('[data-f="featured"]').checked,
+      };
+    });
+  }
+
+  function loadTiers() {
+    return fetch('/api/tiers', { headers: { Accept: 'application/json' } })
+      .then((r) => r.json())
+      .then((data) => fillTiers(data.tiers));
+  }
+
+  el('addTierBtn').addEventListener('click', () => {
+    const card = addTierCard(null);
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    card.querySelector('[data-f="name"]').focus();
+  });
+
+  el('cancelTiersBtn').addEventListener('click', () => {
+    loadTiers().then(() => toast('Changes discarded.', 'ok'));
+  });
+
+  el('saveTiersBtn').addEventListener('click', () => {
+    const tiers = collectTiers();
+    if (tiers.some((t) => !t.name)) {
+      toast('Every level needs a name. Fill in or delete the empty ones.', 'error');
+      return;
+    }
+    const btn = el('saveTiersBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Saving…';
+    fetch('/api/admin/tiers', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken() },
+      credentials: 'same-origin',
+      body: JSON.stringify({ tiers }),
+    })
+      .then(async (r) => {
+        const payload = await r.json().catch(() => ({}));
+        if (r.status === 401) { showLogin(); throw new Error('Your session expired. Please sign in again.'); }
+        if (!r.ok) throw new Error(payload.error || 'Save failed.');
+        return payload;
+      })
+      .then((payload) => {
+        fillTiers(payload.tiers);
+        toast('Saved — pricing is now live on the site.', 'ok');
+      })
+      .catch((err) => toast(err.message || 'Save failed.', 'error'))
+      .finally(() => { btn.disabled = false; btn.textContent = 'Save pricing'; });
+  });
+
+  /* ─── Consult requests inbox ─── */
+  function updateBadge(n) {
+    const b = el('inboxBadge');
+    b.textContent = n > 99 ? '99+' : String(n);
+    b.classList.toggle('hidden', !n);
+  }
+
+  function adminFetch(url, opts) {
+    opts = Object.assign({ credentials: 'same-origin' }, opts);
+    const method = (opts.method || 'GET').toUpperCase();
+    if (method !== 'GET') {
+      opts.headers = Object.assign({ 'X-CSRF-Token': csrfToken() }, opts.headers);
+    }
+    return fetch(url, opts).then(async (r) => {
+      const payload = await r.json().catch(() => ({}));
+      if (r.status === 401) { showLogin(); throw new Error('Your session expired. Please sign in again.'); }
+      if (!r.ok) throw new Error(payload.error || 'Request failed.');
+      return payload;
+    });
+  }
+
+  function consultCard(c) {
+    const div = document.createElement('div');
+    div.className = 'consult' + (c.is_read ? '' : ' consult--unread');
+
+    const head = document.createElement('div');
+    head.className = 'consult__head';
+    const name = document.createElement('span');
+    name.className = 'consult__name';
+    if (!c.is_read) {
+      const dot = document.createElement('span');
+      dot.className = 'consult__dot';
+      dot.title = 'Unread';
+      name.appendChild(dot);
+    }
+    name.appendChild(document.createTextNode(c.name));
+    const date = document.createElement('span');
+    date.className = 'consult__date';
+    date.textContent = new Date(c.created_at).toLocaleString();
+    head.appendChild(name);
+    head.appendChild(date);
+
+    const contact = document.createElement('div');
+    contact.className = 'consult__contact';
+    const email = document.createElement('a');
+    email.href = 'mailto:' + c.email;
+    email.textContent = c.email;
+    const phone = document.createElement('a');
+    phone.href = 'tel:' + c.phone.replace(/[^\d+]/g, '');
+    phone.textContent = c.phone;
+    contact.appendChild(email);
+    contact.appendChild(phone);
+
+    const msg = document.createElement('p');
+    if (c.message) {
+      msg.className = 'consult__msg';
+      msg.textContent = c.message;
+    } else {
+      msg.className = 'consult__msg consult__msg--empty';
+      msg.textContent = 'No message left.';
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'consult__actions';
+
+    const readBtn = document.createElement('button');
+    readBtn.type = 'button';
+    readBtn.className = 'btn btn--outline';
+    readBtn.textContent = c.is_read ? 'Mark as unread' : 'Mark as read';
+    readBtn.addEventListener('click', () => {
+      readBtn.disabled = true;
+      adminFetch('/api/admin/consults/' + c.id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_read: !c.is_read }),
+      })
+        .then(() => loadInbox())
+        .catch((err) => { toast(err.message, 'error'); readBtn.disabled = false; });
+    });
+
+    // Two-step delete: first click arms the button, second click deletes.
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'btn btn--danger';
+    delBtn.textContent = 'Delete';
+    let armed = false;
+    let armTimer = null;
+    delBtn.addEventListener('click', () => {
+      if (!armed) {
+        armed = true;
+        delBtn.textContent = 'Confirm delete?';
+        armTimer = setTimeout(() => { armed = false; delBtn.textContent = 'Delete'; }, 3500);
+        return;
+      }
+      clearTimeout(armTimer);
+      delBtn.disabled = true;
+      adminFetch('/api/admin/consults/' + c.id, { method: 'DELETE' })
+        .then(() => { toast('Request deleted.', 'ok'); return loadInbox(); })
+        .catch((err) => { toast(err.message, 'error'); delBtn.disabled = false; });
+    });
+
+    actions.appendChild(readBtn);
+    actions.appendChild(delBtn);
+
+    div.appendChild(head);
+    div.appendChild(contact);
+    div.appendChild(msg);
+    div.appendChild(actions);
+    return div;
+  }
+
+  function loadInbox() {
+    return adminFetch('/api/admin/consults')
+      .then((data) => {
+        updateBadge(data.unread);
+        const total = data.consults.length;
+        el('inboxCount').textContent = total
+          ? total + ' request' + (total === 1 ? '' : 's') + ' · ' + data.unread + ' unread'
+          : 'No requests yet';
+        const list = el('consultList');
+        list.innerHTML = '';
+        if (!total) {
+          const empty = document.createElement('div');
+          empty.className = 'inbox-empty';
+          empty.textContent = 'No consult requests yet. New submissions from the site will show up here.';
+          list.appendChild(empty);
+          return;
+        }
+        data.consults.forEach((c) => list.appendChild(consultCard(c)));
+      })
+      .catch((err) => toast(err.message || 'Could not load requests.', 'error'));
+  }
+
+  el('refreshInboxBtn').addEventListener('click', () => loadInbox());
+
+  // Keep the unread badge fresh while the admin has the panel open.
+  setInterval(() => {
+    if (!authed) return;
+    fetch('/api/admin/consults', { credentials: 'same-origin' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (data) updateBadge(data.unread); })
+      .catch(() => {});
+  }, 60000);
+
+  /* ─── Auth flow ─── */
+  function hideAllViews() {
+    loginView.classList.add('hidden');
+    el('mustChangeView').classList.add('hidden');
+    tabsNav.classList.add('hidden');
+    Object.keys(views).forEach((k) => views[k].classList.add('hidden'));
+    actionbar.classList.add('hidden');
+  }
+  function showLogin() {
+    authed = false;
+    hideAllViews();
+    loginView.classList.remove('hidden');
+    el('logoutBtn').classList.add('hidden');
+    el('userLabel').classList.add('hidden');
+  }
+  function showMustChange(email) {
+    authed = true;
+    hideAllViews();
+    el('mustChangeView').classList.remove('hidden');
+    el('logoutBtn').classList.remove('hidden');
+    const ul = el('userLabel');
+    ul.textContent = 'Signed in as ' + email;
+    ul.classList.remove('hidden');
+  }
+  function showEditor(email) {
+    authed = true;
+    hideAllViews();
+    tabsNav.classList.remove('hidden');
+    el('logoutBtn').classList.remove('hidden');
+    const ul = el('userLabel');
+    ul.textContent = 'Signed in as ' + email;
+    ul.classList.remove('hidden');
+    switchTab(activeTab);
+  }
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function enterAdmin(email) {
+    showEditor(email);
+    return Promise.all([loadAbout(), loadTiers(), loadInbox()]);
+  }
+
+  el('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const errEl = el('loginError');
+    errEl.textContent = '';
+    const email = el('loginEmail').value.trim();
+    const password = el('loginPass').value;
+    if (!EMAIL_RE.test(email)) { errEl.textContent = 'Please enter a valid email address.'; return; }
+    if (!password) { errEl.textContent = 'Please enter your password.'; return; }
+
+    const btn = el('loginBtn');
+    btn.disabled = true;
+    const orig = btn.textContent; btn.textContent = 'Signing in…';
+    fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken() },
+      credentials: 'same-origin',
+      body: JSON.stringify({ email, password }),
+    })
+      .then(async (r) => {
+        const p = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(p.error || 'Login failed.');
+        return p;
+      })
+      .then((p) => {
+        el('loginPass').value = '';
+        if (p.must_change_password) { showMustChange(p.email); return; }
+        return enterAdmin(p.email);
+      })
+      .catch((err) => { errEl.textContent = err.message; })
+      .finally(() => { btn.disabled = false; btn.textContent = orig; });
+  });
+
+  /* Forced password change (temporary password) */
+  el('mustChangeForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const errEl = el('mcError');
+    errEl.textContent = '';
+    const current = el('mcCurrent').value;
+    const next = el('mcNew').value;
+    const confirm = el('mcConfirm').value;
+    if (next.length < 8) { errEl.textContent = 'New password must be at least 8 characters.'; return; }
+    if (next !== confirm) { errEl.textContent = 'The new passwords don’t match.'; return; }
+
+    const btn = el('mcBtn');
+    btn.disabled = true;
+    adminFetch('/api/admin/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ current_password: current, new_password: next }),
+    })
+      .then(() => {
+        el('mustChangeForm').reset();
+        toast('Password updated. Welcome!', 'ok');
+        return fetch('/api/admin/session', { credentials: 'same-origin' })
+          .then((r) => r.json())
+          .then((s) => (s.authenticated ? enterAdmin(s.email) : showLogin()));
+      })
+      .catch((err) => { errEl.textContent = err.message; })
+      .finally(() => { btn.disabled = false; });
+  });
+
+  el('logoutBtn').addEventListener('click', () => {
+    fetch('/api/admin/logout', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'X-CSRF-Token': csrfToken() },
+    }).then(() => { showLogin(); toast('Signed out.', 'ok'); });
+  });
+
+  /* ─── Settings: change password ─── */
+  el('pwForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const current = el('pwCurrent').value;
+    const next = el('pwNew').value;
+    const confirm = el('pwConfirm').value;
+    if (next.length < 8) { toast('New password must be at least 8 characters.', 'error'); return; }
+    if (next !== confirm) { toast('The new passwords don’t match.', 'error'); return; }
+
+    const btn = el('pwBtn');
+    btn.disabled = true;
+    adminFetch('/api/admin/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ current_password: current, new_password: next }),
+    })
+      .then(() => { el('pwForm').reset(); toast('Password updated.', 'ok'); })
+      .catch((err) => toast(err.message, 'error'))
+      .finally(() => { btn.disabled = false; });
+  });
+
+  /* ─── Settings: manage admin accounts ─── */
+  function renderAdmins(data) {
+    const list = el('adminList');
+    list.innerHTML = '';
+    data.admins.forEach((a) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--w05); font-size:13px;';
+      const label = document.createElement('span');
+      label.textContent = a.email + (a.id === data.self_id ? ' (you)' : '');
+      if (a.id === data.self_id) label.style.color = 'var(--navy-l)';
+      row.appendChild(label);
+      if (a.id !== data.self_id) {
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'btn btn--danger';
+        del.textContent = 'Remove';
+        let armed = false;
+        let timer = null;
+        del.addEventListener('click', () => {
+          if (!armed) {
+            armed = true;
+            del.textContent = 'Confirm remove?';
+            timer = setTimeout(() => { armed = false; del.textContent = 'Remove'; }, 3500);
+            return;
+          }
+          clearTimeout(timer);
+          del.disabled = true;
+          adminFetch('/api/admin/admins/' + a.id, { method: 'DELETE' })
+            .then(() => { toast('Admin removed.', 'ok'); return loadAdmins(); })
+            .catch((err) => { toast(err.message, 'error'); del.disabled = false; });
+        });
+        row.appendChild(del);
+      }
+      list.appendChild(row);
+    });
+  }
+
+  function loadAdmins() {
+    return adminFetch('/api/admin/admins')
+      .then(renderAdmins)
+      .catch((err) => toast(err.message || 'Could not load admins.', 'error'));
+  }
+
+  el('addAdminForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = el('newAdminEmail').value.trim();
+    if (!EMAIL_RE.test(email)) { toast('Please enter a valid email address.', 'error'); return; }
+    const btn = el('addAdminBtn');
+    btn.disabled = true;
+    adminFetch('/api/admin/admins', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    })
+      .then((p) => {
+        el('newAdminEmail').value = '';
+        const box = el('tempPassBox');
+        box.innerHTML = '';
+        const strongLine = document.createElement('div');
+        strongLine.innerHTML = '<strong>Admin added.</strong> Share this one-time temporary password with ';
+        strongLine.appendChild(document.createTextNode(p.admin.email));
+        strongLine.appendChild(document.createTextNode(':'));
+        const pass = document.createElement('div');
+        pass.style.cssText = 'font-family:monospace; font-size:16px; margin-top:8px; letter-spacing:0.06em;';
+        pass.textContent = p.temp_password;
+        const note = document.createElement('div');
+        note.style.cssText = 'color:var(--w40); margin-top:8px; font-size:11.5px;';
+        note.textContent = 'It is shown only this once — they will be asked to set their own password on first sign-in.';
+        box.appendChild(strongLine);
+        box.appendChild(pass);
+        box.appendChild(note);
+        box.classList.remove('hidden');
+        return loadAdmins();
+      })
+      .catch((err) => toast(err.message, 'error'))
+      .finally(() => { btn.disabled = false; });
+  });
+
+  /* ─── Init ─── */
+  function init() {
+    quill = new Quill('#quillEditor', {
+      theme: 'snow',
+      placeholder: 'Tell your story…',
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ header: [3, 4, false] }],
+          ['link'],
+          ['clean'],
+        ],
+      },
+    });
+
+    fetch('/api/admin/session', { credentials: 'same-origin' })
+      .then((r) => r.json())
+      .then((s) => {
+        if (s.authenticated) {
+          if (s.must_change_password) { showMustChange(s.email); return; }
+          return enterAdmin(s.email);
+        }
+        showLogin();
+      })
+      .catch(() => showLogin());
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

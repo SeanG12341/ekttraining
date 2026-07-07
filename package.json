@@ -1,0 +1,26 @@
+{
+  "name": "ekttraining",
+  "version": "1.0.0",
+  "description": "EKT Training landing site with an admin-editable About section.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "multer": "^2.2.0",
+    "resend": "^6.17.1",
+    "sanitize-html": "^2.13.0",
+    "sharp": "^0.33.5"
+  }
+}

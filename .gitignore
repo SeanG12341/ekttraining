@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+
+# Persistent data (SQLite database + session store)
+data/*.db
+data/*.db-*
+
+# User-uploaded / generated images (keep the directory, ignore contents)
+uploads/*
+!uploads/.gitkeep
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
