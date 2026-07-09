@@ -11,7 +11,7 @@ const multer = require('multer');
 
 const store = require('./lib/db');
 const createSqliteStore = require('./lib/session-store');
-const { processAboutImage, deleteUpload, ImageError, MAX_BYTES } = require('./lib/images');
+const { processAboutImage, deleteUpload, ImageError, MAX_BYTES, UPLOAD_DIR } = require('./lib/images');
 const { cleanBodyHtml, cleanTitleHtml, cleanText } = require('./lib/sanitize');
 const { sendContactEmail, isConfigured: mailerConfigured } = require('./lib/mailer');
 
@@ -505,7 +505,7 @@ app.delete('/api/admin/consults/:id', requireAdmin, requireFreshPassword, (req, 
 });
 
 /* ─── Static assets & pages ───────────────────────────────────────── */
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+app.use('/uploads', express.static(UPLOAD_DIR, {
   maxAge: '30d',
   setHeaders: (res) => res.set('Cache-Control', 'public, max-age=2592000'),
 }));
