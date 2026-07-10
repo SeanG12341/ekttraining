@@ -320,29 +320,6 @@
     }
 
     /* ════════════════════════════════════════════════════════
-       SERVICES
-    ════════════════════════════════════════════════════════ */
-    .services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-
-    .svc-card {
-      background: var(--w03); border: 1px solid var(--w08);
-      padding: 34px 30px;
-      transition: border-color .22s, background .22s, transform .22s;
-    }
-    .svc-card:hover { border-color: rgba(74,127,232,0.28); background: rgba(74,127,232,0.04); transform: translateY(-3px); }
-
-    .svc-card__num { font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 0.22em; color: var(--navy-l); opacity: 0.5; margin-bottom: 20px; }
-    .svc-card__title { font-size: 15px; font-weight: 700; letter-spacing: 0.03em; color: var(--white); margin-bottom: 10px; }
-    .svc-card__desc  { font-size: 13px; line-height: 1.76; color: var(--w55); }
-    .svc-card__link  {
-      display: inline-flex; align-items: center; gap: 6px;
-      margin-top: 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--navy-l); opacity: 0.5; text-decoration: none;
-      transition: opacity .18s, gap .18s;
-    }
-    .svc-card:hover .svc-card__link { opacity: 0.88; gap: 10px; }
-
-    /* ════════════════════════════════════════════════════════
        ABOUT
     ════════════════════════════════════════════════════════ */
     .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
@@ -383,76 +360,6 @@
     }
     .about__socials a:hover { border-color: rgba(74,127,232,0.4); color: var(--white); background: rgba(74,127,232,0.06); transform: translateY(-2px); }
     .about__socials svg { width: 15px; height: 15px; fill: currentColor; }
-
-    /* ════════════════════════════════════════════════════════
-       PRICING
-    ════════════════════════════════════════════════════════ */
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
-
-    .price-card {
-      background: var(--w03); border: 1px solid var(--w08);
-      padding: 32px 26px; display: flex; flex-direction: column;
-      transition: border-color .22s;
-    }
-    .price-card:hover:not(.price-card--feat) { border-color: var(--w15); }
-
-    .price-card--feat {
-      background: rgba(26,58,143,0.10);
-      border-color: rgba(74,127,232,0.38);
-      box-shadow: 0 0 64px rgba(26,58,143,0.18);
-    }
-
-    .price-card__badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--navy); color: var(--white);
-      font-size: 8.5px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
-      padding: 5px 12px; margin-bottom: 24px; align-self: flex-start; border-radius: 2px;
-    }
-    .price-card__badge::before { content: ''; display: block; width: 5px; height: 5px; background: var(--navy-l); border-radius: 50%; }
-
-    .price-card__name { font-size: 9px; font-weight: 700; letter-spacing: 0.38em; text-transform: uppercase; color: var(--navy-l); opacity: 0.8; margin-bottom: 16px; }
-
-    .price-card__price { display: flex; align-items: flex-start; gap: 2px; margin-bottom: 8px; }
-    .price-card__dollar { font-size: 17px; font-weight: 700; color: var(--w55); margin-top: 9px; }
-    .price-card__amount { font-family: 'Bebas Neue', sans-serif; font-size: 70px; line-height: 1; letter-spacing: 0.02em; color: var(--white); }
-    .price-card__period { font-size: 11px; color: var(--w25); margin-top: auto; margin-bottom: 5px; margin-left: 3px; }
-
-    .price-card__desc {
-      font-size: 12.5px; color: var(--w55); line-height: 1.70;
-      padding-bottom: 20px; margin-bottom: 20px;
-      border-bottom: 1px solid var(--w08);
-    }
-
-    .price-card__features { list-style: none; flex: 1; display: flex; flex-direction: column; gap: 11px; margin-bottom: 28px; }
-    .price-card__feature  { display: flex; align-items: flex-start; gap: 10px; font-size: 12.5px; color: rgba(255,255,255,0.65); line-height: 1.5; }
-
-    .chk {
-      display: inline-block; width: 14px; height: 14px;
-      border: 1px solid var(--w15); flex-shrink: 0; margin-top: 1px; position: relative;
-    }
-    .chk::after {
-      content: ''; position: absolute; left: 3px; top: 2px;
-      width: 6px; height: 4px;
-      border-left: 1.5px solid var(--navy-l); border-bottom: 1.5px solid var(--navy-l);
-      transform: rotate(-45deg);
-    }
-    .price-card--feat .chk { border-color: rgba(74,127,232,0.38); }
-
-    .price-card__cta {
-      display: flex; align-items: center; justify-content: center; gap: 9px;
-      padding: 13px 20px; font-size: 10px; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none;
-      transition: transform .18s, box-shadow .2s, background .18s, color .18s, border-color .18s;
-    }
-    .price-card__cta .arr { transition: transform .2s; }
-    .price-card__cta:hover .arr { transform: translateX(4px); }
-
-    .cta--navy { background: var(--navy); color: var(--white); }
-    .cta--navy:hover { background: var(--navy-d); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(26,58,143,0.45); }
-    .cta--outline { border: 1px solid var(--w15); color: var(--w55); }
-    .cta--outline:hover { border-color: var(--w30); color: var(--white); transform: translateY(-1px); }
-
-    .pricing__note { margin-top: 28px; text-align: center; font-size: 11px; color: var(--w25); letter-spacing: 0.04em; }
 
     /* ════════════════════════════════════════════════════════
        CTA SECTION
@@ -583,7 +490,6 @@
     @media (max-width: 1024px) {
       .about-grid { grid-template-columns: 1fr; gap: 52px; }
       .about__img  { aspect-ratio: 16/9; }
-      .pricing-grid { grid-template-columns: repeat(2,1fr); }
     }
     @media (max-width: 768px) {
       .nav__links, .nav__actions { display: none; }
@@ -595,8 +501,6 @@
       .sec  { padding: 76px 0; }
       .hero__inner { padding: 0 24px; padding-top: 88px; }
       .hero__social { left: 24px; }
-      .services-grid { grid-template-columns: 1fr; }
-      .pricing-grid  { grid-template-columns: 1fr; }
       .cta-sec { padding: 88px 24px; }
       .footer  { padding: 28px 24px; }
       .footer__links { display: none; }
@@ -604,7 +508,6 @@
     @media (max-width: 480px) {
       .hero__h1 { font-size: 54px; }
       .sec__title { font-size: 38px; }
-      .price-card__amount { font-size: 58px; }
       .cta-sec__title { font-size: 54px; }
     }
   </style>
@@ -623,9 +526,7 @@
 
     <nav aria-label="Primary">
       <ul class="nav__links">
-        <li><a href="#services">Services</a></li>
         <li><a href="#about">About</a></li>
-        <li><a href="#pricing">Pricing</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
@@ -642,9 +543,7 @@
 
 <!-- Mobile menu -->
 <div class="mmenu" id="mobileMenu">
-  <a href="#services" onclick="closeMenu()">Services</a>
   <a href="#about"    onclick="closeMenu()">About</a>
-  <a href="#pricing"  onclick="closeMenu()">Pricing</a>
   <a href="#contact"  onclick="closeMenu()">Contact</a>
   <div class="mmenu__cta">
     <a href="#contact" onclick="closeMenu()" class="btn btn--navy">Book Now <span class="arr">&#8594;</span></a>
@@ -683,7 +582,7 @@
 
     <div class="hero__ctas">
       <a href="#contact" class="btn btn--navy">Book a Consultation <span class="arr">&#8594;</span></a>
-      <a href="#services" class="btn btn--ghost">See Services</a>
+      <a href="#about" class="btn btn--ghost">About Me</a>
     </div>
   </div>
 
@@ -731,46 +630,6 @@
 </div>
 
 <!-- ══════════════════════════════════════════════
-     SERVICES
-══════════════════════════════════════════════ -->
-<section class="sec" id="services">
-  <div class="wrap">
-    <div class="reveal">
-      <p class="sec__label">What I Offer</p>
-      <h2 class="sec__title">Services Built<br>to <em>Perform</em></h2>
-    </div>
-    <div class="services-grid">
-      <div class="svc-card reveal d1">
-        <div class="svc-card__num">01</div>
-        <h3 class="svc-card__title">Personal Training</h3>
-        <p class="svc-card__desc">One-on-one sessions built around your goals, your current level, and your schedule. Every rep has a purpose — no filler, no guesswork.</p>
-        <a href="#contact" class="svc-card__link">Get started &#8594;</a>
-      </div>
-      <div class="svc-card reveal d2">
-        <div class="svc-card__num">02</div>
-        <h3 class="svc-card__title">Strength Programming</h3>
-        <p class="svc-card__desc">Custom periodized programs designed to systematically build power, muscle, and athletic performance across every training block.</p>
-        <a href="#contact" class="svc-card__link">Get started &#8594;</a>
-      </div>
-      <div class="svc-card reveal d3">
-        <div class="svc-card__num">03</div>
-        <h3 class="svc-card__title">Nutrition Coaching</h3>
-        <p class="svc-card__desc">Evidence-based nutrition strategies tailored to fuel your training — from macro tracking to sustainable habits that actually last.</p>
-        <a href="#contact" class="svc-card__link">Get started &#8594;</a>
-      </div>
-      <div class="svc-card reveal d4">
-        <div class="svc-card__num">04</div>
-        <h3 class="svc-card__title">Online Coaching</h3>
-        <p class="svc-card__desc">Full remote coaching with custom programming, regular check-ins, and direct support — for athletes who train on their own schedule.</p>
-        <a href="#contact" class="svc-card__link">Get started &#8594;</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="div">
-
-<!-- ══════════════════════════════════════════════
      ABOUT
 ══════════════════════════════════════════════ -->
 <section class="sec" id="about">
@@ -804,72 +663,15 @@
 <hr class="div">
 
 <!-- ══════════════════════════════════════════════
-     PRICING
+     GET IN TOUCH
 ══════════════════════════════════════════════ -->
-<section class="sec sec--alt" id="pricing">
-  <a class="edit-link" href="/admin#pricing">&#9998; Edit Pricing</a>
+<section class="sec sec--alt" id="get-in-touch" style="text-align:center;">
   <div class="wrap">
     <div class="reveal">
-      <p class="sec__label">Transparent Pricing</p>
-      <h2 class="sec__title">Choose Your <em>Level</em></h2>
+      <p class="sec__label">Questions?</p>
+      <h2 class="sec__title" style="margin-bottom:32px;">Get In <em>Touch</em></h2>
+      <a href="#contactForm" class="btn btn--navy" style="font-size:10.5px;padding:15px 30px;">Send a Message <span class="arr">&#8594;</span></a>
     </div>
-    <!-- Tiers are loaded from the admin-managed API (/api/tiers) and rendered
-         by the script at the bottom of the page. The markup below is a no-JS /
-         offline fallback that mirrors the stored defaults. -->
-    <div class="pricing-grid" id="pricingGrid">
-
-      <!-- Starter -->
-      <div class="price-card reveal d1">
-        <p class="price-card__name">Starter</p>
-        <div class="price-card__price" style="align-items:center;">
-          <span style="font-size:15px;font-weight:700;color:var(--w55);letter-spacing:-0.02em;">Contact for pricing</span>
-        </div>
-        <p class="price-card__desc">A foundation plan for beginners building consistent habits.</p>
-        <ul class="price-card__features">
-          <li class="price-card__feature"><span class="chk"></span>Personalized workout plan</li>
-          <li class="price-card__feature"><span class="chk"></span>Basic nutrition guidance</li>
-          <li class="price-card__feature"><span class="chk"></span>Progress tracking</li>
-          <li class="price-card__feature"><span class="chk"></span>Email support</li>
-        </ul>
-        <a href="#contact" class="price-card__cta cta--outline">Get Started <span class="arr">&#8594;</span></a>
-      </div>
-
-      <!-- Performance (featured) -->
-      <div class="price-card price-card--feat reveal d2">
-        <div class="price-card__badge">Most Popular</div>
-        <p class="price-card__name">Performance</p>
-        <div class="price-card__price" style="align-items:center;">
-          <span style="font-size:15px;font-weight:700;color:rgba(74,127,232,0.9);letter-spacing:-0.02em;">Contact for pricing</span>
-        </div>
-        <p class="price-card__desc">For athletes ready to commit to a structured program.</p>
-        <ul class="price-card__features">
-          <li class="price-card__feature"><span class="chk"></span>Custom periodized programming</li>
-          <li class="price-card__feature"><span class="chk"></span>Nutrition planning</li>
-          <li class="price-card__feature"><span class="chk"></span>Regular check-ins</li>
-          <li class="price-card__feature"><span class="chk"></span>Priority scheduling</li>
-          <li class="price-card__feature"><span class="chk"></span>Text support</li>
-        </ul>
-        <a href="#contact" class="price-card__cta cta--navy">Book Now <span class="arr">&#8594;</span></a>
-      </div>
-
-      <!-- Elite -->
-      <div class="price-card reveal d3">
-        <p class="price-card__name">Elite</p>
-        <div class="price-card__price" style="align-items:center;">
-          <span style="font-size:15px;font-weight:700;color:var(--w55);letter-spacing:-0.02em;">Contact for pricing</span>
-        </div>
-        <p class="price-card__desc">Full-spectrum coaching with daily accountability.</p>
-        <ul class="price-card__features">
-          <li class="price-card__feature"><span class="chk"></span>Advanced programming</li>
-          <li class="price-card__feature"><span class="chk"></span>Nutrition and recovery support</li>
-          <li class="price-card__feature"><span class="chk"></span>Daily accountability</li>
-          <li class="price-card__feature"><span class="chk"></span>Movement analysis</li>
-        </ul>
-        <a href="#contact" class="price-card__cta cta--outline">Go Elite <span class="arr">&#8594;</span></a>
-      </div>
-
-    </div>
-    <p class="pricing__note reveal d4">Not sure which plan fits? <a href="#contact" style="color:var(--navy-l);opacity:0.6;text-decoration:underline;text-underline-offset:3px;">Book a free consultation</a> to discuss your options.</p>
   </div>
 </section>
 
@@ -888,7 +690,6 @@
       </p>
       <div class="cta-sec__actions">
         <a href="#contactForm" class="btn btn--navy" style="font-size:10.5px;padding:15px 30px;">Book a Free Call <span class="arr">&#8594;</span></a>
-        <a href="#services" class="btn btn--outline" style="font-size:10.5px;padding:14px 26px;">View Services</a>
       </div>
 
     <form class="contact-form reveal d1" id="contactForm" novalidate>
@@ -931,9 +732,7 @@
       <span class="footer__logo-text">EKT Training</span>
     </a>
     <ul class="footer__links">
-      <li><a href="#services">Services</a></li>
       <li><a href="#about">About</a></li>
-      <li><a href="#pricing">Pricing</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <div class="footer__social">
@@ -957,7 +756,6 @@
 <div class="admin-bar" id="adminBar" hidden>
   <span class="admin-bar__label">Admin</span>
   <a href="/admin#about">Edit About</a>
-  <a href="/admin#pricing">Edit Pricing</a>
   <a href="/admin#inbox">Inbox<span class="admin-bar__badge" id="adminBarBadge" hidden>0</span></a>
   <button type="button" id="adminBarSignout">Sign out</button>
 </div>
@@ -1097,48 +895,6 @@
   fetch('/api/about', { headers: { 'Accept': 'application/json' } })
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
     .then(renderAbout)
-    .catch(() => { /* keep the static fallback already in the markup */ });
-
-  /* ── Dynamic pricing tiers (managed via /admin) ── */
-  function esc(s) {
-    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-  function renderTiers(data) {
-    const grid = document.getElementById('pricingGrid');
-    const section = document.getElementById('pricing');
-    if (!grid || !data || !Array.isArray(data.tiers)) return;
-
-    if (!data.tiers.length) {
-      // All levels deleted by the admin — hide the section entirely.
-      if (section) section.style.display = 'none';
-      return;
-    }
-    if (section) section.style.display = '';
-
-    grid.innerHTML = data.tiers.map((t, i) => {
-      const feat = !!t.featured;
-      const features = Array.isArray(t.features) ? t.features : [];
-      return `<div class="price-card ${feat ? 'price-card--feat ' : ''}reveal d${Math.min(i + 1, 5)}">
-        ${t.badge ? `<div class="price-card__badge">${esc(t.badge)}</div>` : ''}
-        <p class="price-card__name">${esc(t.name)}</p>
-        <div class="price-card__price" style="align-items:center;">
-          <span style="font-size:15px;font-weight:700;color:${feat ? 'rgba(74,127,232,0.9)' : 'var(--w55)'};letter-spacing:-0.02em;">${esc(t.price_text)}</span>
-        </div>
-        ${t.description ? `<p class="price-card__desc">${esc(t.description)}</p>` : ''}
-        <ul class="price-card__features">
-          ${features.map(f => `<li class="price-card__feature"><span class="chk"></span>${esc(f)}</li>`).join('')}
-        </ul>
-        <a href="#contact" class="price-card__cta ${feat ? 'cta--navy' : 'cta--outline'}">${esc(t.cta_label)} <span class="arr">&#8594;</span></a>
-      </div>`;
-    }).join('');
-
-    grid.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-  }
-
-  fetch('/api/tiers', { headers: { 'Accept': 'application/json' } })
-    .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(renderTiers)
     .catch(() => { /* keep the static fallback already in the markup */ });
 
   /* ── Admin mode: reveal edit controls when an admin session exists ── */
