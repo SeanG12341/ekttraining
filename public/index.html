@@ -374,16 +374,6 @@
       background: radial-gradient(ellipse, rgba(26,58,143,0.20) 0%, transparent 68%);
       pointer-events: none;
     }
-    .cta-sec__label { font-size: 9px; font-weight: 700; letter-spacing: 0.46em; text-transform: uppercase; color: var(--navy-l); opacity: 0.65; margin-bottom: 18px; }
-    .cta-sec__title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(52px, 8.5vw, 100px);
-      line-height: 0.90; letter-spacing: 0.025em; text-transform: uppercase; color: var(--white); margin-bottom: 20px;
-    }
-    .cta-sec__title em { font-style: normal; color: var(--navy-l); }
-    .cta-sec__body { font-size: 14px; line-height: 1.78; color: var(--w40); max-width: 440px; margin: 0 auto 44px; }
-    .cta-sec__actions { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
-
     /* ─── Contact form ─── */
     .contact-form {
       max-width: 520px; margin: 52px auto 0; text-align: left;
@@ -508,7 +498,6 @@
     @media (max-width: 480px) {
       .hero__h1 { font-size: 54px; }
       .sec__title { font-size: 38px; }
-      .cta-sec__title { font-size: 54px; }
     }
   </style>
 </head>
@@ -577,7 +566,7 @@
 
     <p class="hero__body">
       One-on-one training with Elijah King Turner. Custom programming,
-      accountability, and the structure you need to level up — for real.
+      accountability, and the structure you need to level up.
     </p>
 
     <div class="hero__ctas">
@@ -682,17 +671,7 @@
   <div class="cta-sec__glow" aria-hidden="true"></div>
   <div style="position:relative;z-index:1;">
     <div class="reveal">
-      <p class="cta-sec__label">Start Today</p>
-      <h2 class="cta-sec__title">Ready to<br><em>Level Up?</em></h2>
-      <p class="cta-sec__body">
-        Book a free 30-minute consultation. We'll talk about your goals, where you are right now, and exactly what it'll take to get there.
-        Or email directly at <a href="mailto:elijah02.ek@gmail.com" style="color:var(--navy-l);text-decoration:underline;text-underline-offset:3px;">elijah02.ek@gmail.com</a>.
-      </p>
-      <div class="cta-sec__actions">
-        <a href="#contactForm" class="btn btn--navy" style="font-size:10.5px;padding:15px 30px;">Book a Free Call <span class="arr">&#8594;</span></a>
-      </div>
-
-    <form class="contact-form reveal d1" id="contactForm" novalidate>
+    <form class="contact-form reveal d1" id="contactForm" novalidate style="margin-top:0;">
       <div class="contact-form__row">
         <div class="contact-form__field">
           <label for="cfName">Name</label>
