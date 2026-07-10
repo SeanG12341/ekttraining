@@ -151,11 +151,6 @@ app.get('/api/about', (req, res) => {
   res.json(store.getAbout());
 });
 
-app.get('/api/tiers', (req, res) => {
-  res.set('Cache-Control', 'no-store');
-  res.json({ tiers: store.listTiers() });
-});
-
 /* ─── Contact form → email via Resend ─────────────────────────────── */
 // Simple in-memory rate limit: max 5 submissions per IP per 10 minutes.
 const contactHits = new Map();
@@ -432,48 +427,6 @@ app.put('/api/admin/about', requireAdmin, requireFreshPassword, upload.single('i
       return res.status(400).json({ error: err.message });
     }
     console.error('[about] save failed:', err);
-    res.status(500).json({ error: 'Something went wrong while saving. Please try again.' });
-  }
-});
-
-/* ─── Admin pricing tiers API ─────────────────────────────────────── */
-
-const MAX_TIERS = 12;
-
-/** Validate + sanitize the tier list sent by the admin editor. Returns null if invalid. */
-function parseTiers(raw) {
-  if (!Array.isArray(raw) || raw.length > MAX_TIERS) return null;
-  const tiers = [];
-  for (const t of raw) {
-    if (!t || typeof t !== 'object') return null;
-    const name = cleanText(t.name).slice(0, 60);
-    if (!name) return null;
-    const features = Array.isArray(t.features)
-      ? t.features.map((f) => cleanText(f).slice(0, 140)).filter(Boolean).slice(0, 12)
-      : [];
-    tiers.push({
-      name,
-      badge: cleanText(t.badge).slice(0, 40),
-      price_text: cleanText(t.price_text).slice(0, 80),
-      description: cleanText(t.description).slice(0, 400),
-      features,
-      cta_label: cleanText(t.cta_label).slice(0, 40) || 'Get Started',
-      featured: !!t.featured,
-    });
-  }
-  return tiers;
-}
-
-app.put('/api/admin/tiers', requireAdmin, requireFreshPassword, (req, res) => {
-  const tiers = parseTiers((req.body || {}).tiers);
-  if (!tiers) {
-    return res.status(400).json({ error: 'Invalid tier data. Every level needs at least a name.' });
-  }
-  try {
-    const saved = store.replaceTiers(tiers);
-    res.json({ ok: true, tiers: saved });
-  } catch (err) {
-    console.error('[tiers] save failed:', err);
     res.status(500).json({ error: 'Something went wrong while saving. Please try again.' });
   }
 });

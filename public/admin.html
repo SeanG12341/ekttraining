@@ -185,15 +185,6 @@
       font-size: 10px; font-weight: 700; letter-spacing: 0;
     }
 
-    /* ─── Tier editor cards ─── */
-    .tier-card { background: var(--panel); border: 1px solid var(--w08); border-radius: 8px; padding: 24px; margin-bottom: 18px; }
-    .tier-card__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--w05); }
-    .tier-card__label { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--w55); }
-    .tier-card__tools { display: flex; gap: 8px; }
-    .tier-card__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .tier-card .field { margin-bottom: 16px; }
-    .tier-check { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--w55); cursor: pointer; user-select: none; }
-    .tier-check input { width: auto; accent-color: var(--navy-l); cursor: pointer; }
     .btn--icon { background: transparent; border: 1px solid var(--w15); color: var(--w55); padding: 8px 11px; font-size: 12px; letter-spacing: 0; }
     .btn--icon:hover:not(:disabled) { border-color: var(--w40); color: #fff; }
 
@@ -223,7 +214,6 @@
       .topbar { padding: 14px 20px; }
       .social-row { grid-template-columns: 1fr; }
       .tabs { padding: 10px 20px 0; overflow-x: auto; }
-      .tier-card__row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -244,7 +234,6 @@
 <!-- ─── SECTION TABS (visible when signed in) ─── -->
 <nav class="tabs hidden" id="tabsNav" aria-label="Admin sections">
   <button type="button" class="tab tab--active" data-tab="about">About</button>
-  <button type="button" class="tab" data-tab="pricing">Pricing</button>
   <button type="button" class="tab" data-tab="inbox">Consult Requests <span class="tab__badge hidden" id="inboxBadge">0</span></button>
   <button type="button" class="tab" data-tab="settings">Settings</button>
 </nav>
@@ -362,25 +351,6 @@
   </form>
 </main>
 
-<!-- ─── PRICING EDITOR ─── -->
-<main class="editor hidden" id="pricingView">
-  <div class="editor__head">
-    <p class="editor__eyebrow">Content Manager</p>
-    <h1 class="editor__title">Choose Your Level</h1>
-    <p class="editor__sub">Edit, add, reorder or delete the pricing levels shown on the site. Changes go live as soon as you save.</p>
-  </div>
-
-  <div id="tierList"></div>
-
-  <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-top:8px;">
-    <button type="button" class="btn btn--outline" id="addTierBtn">+ Add level</button>
-    <div style="display:flex; gap:12px; align-items:center;">
-      <button type="button" class="btn btn--outline" id="cancelTiersBtn">Discard changes</button>
-      <button type="button" class="btn btn--navy" id="saveTiersBtn">Save pricing</button>
-    </div>
-  </div>
-</main>
-
 <!-- ─── CONSULT REQUESTS INBOX ─── -->
 <main class="editor hidden" id="inboxView">
   <div class="editor__head">
@@ -472,8 +442,8 @@
     return m ? decodeURIComponent(m[1]) : '';
   }
 
-  /* ─── Section tabs (deep-linkable via #about / #pricing / #inbox / #settings) ─── */
-  const views = { about: editorView, pricing: el('pricingView'), inbox: el('inboxView'), settings: el('settingsView') };
+  /* ─── Section tabs (deep-linkable via #about / #inbox / #settings) ─── */
+  const views = { about: editorView, inbox: el('inboxView'), settings: el('settingsView') };
   let activeTab = Object.prototype.hasOwnProperty.call(views, location.hash.slice(1)) ? location.hash.slice(1) : 'about';
 
   function switchTab(name) {
@@ -680,122 +650,6 @@
     loadAbout().then(() => toast('Changes discarded.', 'ok'));
   });
 
-  /* ─── Pricing tier editor ─── */
-  const TIER_FIELDS = ['name', 'badge', 'price_text', 'cta_label', 'description', 'features'];
-
-  function addTierCard(t) {
-    t = t || { name: '', badge: '', price_text: 'Contact for pricing', description: '', features: [], cta_label: 'Get Started', featured: false };
-    const card = document.createElement('div');
-    card.className = 'tier-card';
-    card.innerHTML =
-      '<div class="tier-card__head">' +
-        '<span class="tier-card__label">Level</span>' +
-        '<div class="tier-card__tools">' +
-          '<button type="button" class="btn btn--icon" data-act="up" title="Move up">&#8593;</button>' +
-          '<button type="button" class="btn btn--icon" data-act="down" title="Move down">&#8595;</button>' +
-          '<button type="button" class="btn btn--danger" data-act="del">Delete</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="tier-card__row">' +
-        '<div class="field"><label class="field-label">Name</label><input type="text" data-f="name" maxlength="60" placeholder="Starter" /></div>' +
-        '<div class="field"><label class="field-label">Badge (optional)</label><input type="text" data-f="badge" maxlength="40" placeholder="Most Popular" /></div>' +
-      '</div>' +
-      '<div class="tier-card__row">' +
-        '<div class="field"><label class="field-label">Pricing text</label><input type="text" data-f="price_text" maxlength="80" placeholder="Contact for pricing &middot; or e.g. $199 / month" /></div>' +
-        '<div class="field"><label class="field-label">Button label</label><input type="text" data-f="cta_label" maxlength="40" placeholder="Get Started" /></div>' +
-      '</div>' +
-      '<div class="field"><label class="field-label">Description</label><textarea data-f="description" rows="2" maxlength="400" placeholder="Who is this level for?"></textarea></div>' +
-      '<div class="field"><label class="field-label">Bullet points &mdash; one per line</label><textarea data-f="features" rows="4" placeholder="Personalized workout plan\nEmail support"></textarea></div>' +
-      '<label class="tier-check"><input type="checkbox" data-f="featured" /> Highlight this level (&ldquo;Most Popular&rdquo; card style)</label>';
-
-    // Set values via properties so stored content can never inject markup.
-    card.querySelector('[data-f="name"]').value = t.name || '';
-    card.querySelector('[data-f="badge"]').value = t.badge || '';
-    card.querySelector('[data-f="price_text"]').value = t.price_text || '';
-    card.querySelector('[data-f="cta_label"]').value = t.cta_label || '';
-    card.querySelector('[data-f="description"]').value = t.description || '';
-    card.querySelector('[data-f="features"]').value = (t.features || []).join('\n');
-    card.querySelector('[data-f="featured"]').checked = !!t.featured;
-
-    card.querySelector('[data-act="del"]').addEventListener('click', () => card.remove());
-    card.querySelector('[data-act="up"]').addEventListener('click', () => {
-      const prev = card.previousElementSibling;
-      if (prev) card.parentNode.insertBefore(card, prev);
-    });
-    card.querySelector('[data-act="down"]').addEventListener('click', () => {
-      const next = card.nextElementSibling;
-      if (next) card.parentNode.insertBefore(next, card);
-    });
-
-    el('tierList').appendChild(card);
-    return card;
-  }
-
-  function fillTiers(tiers) {
-    el('tierList').innerHTML = '';
-    (tiers || []).forEach(addTierCard);
-  }
-
-  function collectTiers() {
-    return Array.from(el('tierList').children).map((card) => {
-      const get = (f) => card.querySelector('[data-f="' + f + '"]').value.trim();
-      return {
-        name: get('name'),
-        badge: get('badge'),
-        price_text: get('price_text'),
-        cta_label: get('cta_label'),
-        description: get('description'),
-        features: get('features').split('\n').map((s) => s.trim()).filter(Boolean),
-        featured: card.querySelector('[data-f="featured"]').checked,
-      };
-    });
-  }
-
-  function loadTiers() {
-    return fetch('/api/tiers', { headers: { Accept: 'application/json' } })
-      .then((r) => r.json())
-      .then((data) => fillTiers(data.tiers));
-  }
-
-  el('addTierBtn').addEventListener('click', () => {
-    const card = addTierCard(null);
-    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    card.querySelector('[data-f="name"]').focus();
-  });
-
-  el('cancelTiersBtn').addEventListener('click', () => {
-    loadTiers().then(() => toast('Changes discarded.', 'ok'));
-  });
-
-  el('saveTiersBtn').addEventListener('click', () => {
-    const tiers = collectTiers();
-    if (tiers.some((t) => !t.name)) {
-      toast('Every level needs a name. Fill in or delete the empty ones.', 'error');
-      return;
-    }
-    const btn = el('saveTiersBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Saving…';
-    fetch('/api/admin/tiers', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken() },
-      credentials: 'same-origin',
-      body: JSON.stringify({ tiers }),
-    })
-      .then(async (r) => {
-        const payload = await r.json().catch(() => ({}));
-        if (r.status === 401) { showLogin(); throw new Error('Your session expired. Please sign in again.'); }
-        if (!r.ok) throw new Error(payload.error || 'Save failed.');
-        return payload;
-      })
-      .then((payload) => {
-        fillTiers(payload.tiers);
-        toast('Saved — pricing is now live on the site.', 'ok');
-      })
-      .catch((err) => toast(err.message || 'Save failed.', 'error'))
-      .finally(() => { btn.disabled = false; btn.textContent = 'Save pricing'; });
-  });
-
   /* ─── Consult requests inbox ─── */
   function updateBadge(n) {
     const b = el('inboxBadge');
@@ -979,7 +833,7 @@
 
   function enterAdmin(email) {
     showEditor(email);
-    return Promise.all([loadAbout(), loadTiers(), loadInbox()]);
+    return Promise.all([loadAbout(), loadInbox()]);
   }
 
   el('loginForm').addEventListener('submit', (e) => {
