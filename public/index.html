@@ -362,49 +362,6 @@
     .about__socials svg { width: 15px; height: 15px; fill: currentColor; }
 
     /* ════════════════════════════════════════════════════════
-       CTA SECTION
-    ════════════════════════════════════════════════════════ */
-    .cta-sec {
-      background: var(--bg3); border-top: 1px solid var(--w05);
-      padding: 128px 44px; text-align: center; position: relative; overflow: hidden;
-    }
-    .cta-sec__glow {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      width: 700px; height: 320px;
-      background: radial-gradient(ellipse, rgba(26,58,143,0.20) 0%, transparent 68%);
-      pointer-events: none;
-    }
-    /* ─── Contact form ─── */
-    .contact-form {
-      max-width: 520px; margin: 52px auto 0; text-align: left;
-      background: var(--w03); border: 1px solid var(--w08);
-      border-radius: 10px; padding: 34px 30px;
-    }
-    .contact-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .contact-form__field { margin-bottom: 16px; }
-    .contact-form__field label {
-      display: block; font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--navy-l); opacity: 0.82; margin-bottom: 8px;
-    }
-    .contact-form input, .contact-form textarea {
-      width: 100%; background: var(--bg2); border: 1px solid var(--w08);
-      color: var(--white); font-family: 'Inter', sans-serif; font-size: 14px;
-      padding: 12px 14px; border-radius: 5px; transition: border-color .18s, box-shadow .18s;
-    }
-    .contact-form input:focus, .contact-form textarea:focus {
-      outline: none; border-color: rgba(74,127,232,0.6); box-shadow: 0 0 0 3px rgba(74,127,232,0.12);
-    }
-    .contact-form textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
-    .contact-form__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-    .contact-form__submit { width: 100%; justify-content: center; padding: 15px; font-size: 10.5px; margin-top: 6px; }
-    .contact-form__note { font-size: 12px; line-height: 1.5; margin-top: 16px; text-align: center; min-height: 18px; }
-    .contact-form__note--ok  { color: #4fd18b; }
-    .contact-form__note--err { color: #ef7478; }
-    .contact-form .spinner { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @media (max-width: 560px) { .contact-form__row { grid-template-columns: 1fr; } }
-
-    /* ════════════════════════════════════════════════════════
        FOOTER
     ════════════════════════════════════════════════════════ */
     .footer { background: #020409; border-top: 1px solid var(--w05); padding: 36px 44px; }
@@ -491,7 +448,6 @@
       .sec  { padding: 76px 0; }
       .hero__inner { padding: 0 24px; padding-top: 88px; }
       .hero__social { left: 24px; }
-      .cta-sec { padding: 88px 24px; }
       .footer  { padding: 28px 24px; }
       .footer__links { display: none; }
     }
@@ -521,7 +477,7 @@
     </nav>
 
     <div class="nav__actions">
-      <a href="#contact" class="nav__book">Book Now</a>
+      <a href="/contact" class="nav__book">Book Now</a>
     </div>
 
     <button class="nav__burger" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu(this)">
@@ -535,7 +491,7 @@
   <a href="#about"    onclick="closeMenu()">About</a>
   <a href="#contact"  onclick="closeMenu()">Contact</a>
   <div class="mmenu__cta">
-    <a href="#contact" onclick="closeMenu()" class="btn btn--navy">Book Now <span class="arr">&#8594;</span></a>
+    <a href="/contact" onclick="closeMenu()" class="btn btn--navy">Book Now <span class="arr">&#8594;</span></a>
   </div>
 </div>
 
@@ -570,7 +526,7 @@
     </p>
 
     <div class="hero__ctas">
-      <a href="#contact" class="btn btn--navy">Book a Consultation <span class="arr">&#8594;</span></a>
+      <a href="/contact" class="btn btn--navy">Book a Consultation <span class="arr">&#8594;</span></a>
       <a href="#about" class="btn btn--ghost">About Me</a>
     </div>
   </div>
@@ -654,49 +610,12 @@
 <!-- ══════════════════════════════════════════════
      GET IN TOUCH
 ══════════════════════════════════════════════ -->
-<section class="sec sec--alt" id="get-in-touch" style="text-align:center;">
+<section class="sec sec--alt" id="contact" style="text-align:center;">
   <div class="wrap">
     <div class="reveal">
       <p class="sec__label">Questions?</p>
       <h2 class="sec__title" style="margin-bottom:32px;">Get In <em>Touch</em></h2>
-      <a href="#contactForm" class="btn btn--navy" style="font-size:10.5px;padding:15px 30px;">Send a Message <span class="arr">&#8594;</span></a>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════
-     CONTACT / CTA
-══════════════════════════════════════════════ -->
-<section class="cta-sec" id="contact">
-  <div class="cta-sec__glow" aria-hidden="true"></div>
-  <div style="position:relative;z-index:1;">
-    <div class="reveal">
-    <form class="contact-form reveal d1" id="contactForm" novalidate style="margin-top:0;">
-      <div class="contact-form__row">
-        <div class="contact-form__field">
-          <label for="cfName">Name</label>
-          <input type="text" id="cfName" name="name" autocomplete="name" maxlength="120" required />
-        </div>
-        <div class="contact-form__field">
-          <label for="cfEmail">Email</label>
-          <input type="email" id="cfEmail" name="email" autocomplete="email" maxlength="200" required />
-        </div>
-      </div>
-      <div class="contact-form__field">
-        <label for="cfPhone">Phone</label>
-        <input type="tel" id="cfPhone" name="phone" autocomplete="tel" maxlength="30" placeholder="(555) 123-4567" required />
-      </div>
-      <div class="contact-form__field">
-        <label for="cfMessage">Message <span style="color:var(--w25);font-weight:500;letter-spacing:0;text-transform:none;">(optional)</span></label>
-        <textarea id="cfMessage" name="message" maxlength="2000" placeholder="Tell me a bit about where you're at and what you're after."></textarea>
-      </div>
-      <!-- Honeypot: hidden from real users; bots that fill it are ignored -->
-      <div class="contact-form__hp" aria-hidden="true">
-        <label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
-      </div>
-      <button type="submit" class="btn btn--navy contact-form__submit" id="cfSubmit">Book a Consult <span class="arr">&#8594;</span></button>
-      <p class="contact-form__note" id="cfNote" role="status" aria-live="polite"></p>
-    </form>
+      <a href="/contact" class="btn btn--navy" style="font-size:10.5px;padding:15px 30px;">Send a Message <span class="arr">&#8594;</span></a>
     </div>
   </div>
 </section>
@@ -900,71 +819,6 @@
     })
     .catch(() => {});
 
-  /* ── Consult request form → saved to the site database ── */
-  const contactForm = document.getElementById('contactForm');
-  if (contactForm) {
-    const note = document.getElementById('cfNote');
-    const submit = document.getElementById('cfSubmit');
-    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const PHONE_RE = /^[\d\s().+-]{7,30}$/;
-
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      note.className = 'contact-form__note';
-      note.textContent = '';
-
-      const payload = {
-        name: contactForm.name.value.trim(),
-        email: contactForm.email.value.trim(),
-        phone: contactForm.phone.value.trim(),
-        message: contactForm.message.value.trim(),
-        website: contactForm.website.value, // honeypot
-      };
-      if (!payload.name || !payload.email || !payload.phone) {
-        note.className = 'contact-form__note contact-form__note--err';
-        note.textContent = 'Please fill in your name, email, and phone number.';
-        return;
-      }
-      if (!EMAIL_RE.test(payload.email)) {
-        note.className = 'contact-form__note contact-form__note--err';
-        note.textContent = 'Please enter a valid email address.';
-        return;
-      }
-      if (!PHONE_RE.test(payload.phone)) {
-        note.className = 'contact-form__note contact-form__note--err';
-        note.textContent = 'Please enter a valid phone number.';
-        return;
-      }
-
-      submit.disabled = true;
-      const original = submit.innerHTML;
-      submit.innerHTML = '<span class="spinner"></span> Sending…';
-
-      fetch('/api/consult', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-        .then(async (r) => {
-          const data = await r.json().catch(() => ({}));
-          if (!r.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
-          return data;
-        })
-        .then(() => {
-          contactForm.reset();
-          note.className = 'contact-form__note contact-form__note--ok';
-          note.textContent = 'Thanks — your request has been received. Elijah will be in touch soon.';
-        })
-        .catch((err) => {
-          note.className = 'contact-form__note contact-form__note--err';
-          note.textContent = err.message;
-        })
-        .finally(() => {
-          submit.disabled = false;
-          submit.innerHTML = original;
-        });
-    });
-  }
 </script>
 </body>
 </html>

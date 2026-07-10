@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — EKT Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+
+    /* ─── Reset ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --navy:   #1A3A8F;
+      --navy-d: #122d72;
+      --navy-l: #4a7fe8;
+      --bg:     #05080f;
+      --bg2:    #070c18;
+      --bg3:    #060a14;
+      --white:  #ffffff;
+      --w70:    rgba(255,255,255,0.70);
+      --w55:    rgba(255,255,255,0.55);
+      --w40:    rgba(255,255,255,0.40);
+      --w25:    rgba(255,255,255,0.25);
+      --w15:    rgba(255,255,255,0.15);
+      --w08:    rgba(255,255,255,0.08);
+      --w05:    rgba(255,255,255,0.05);
+      --w03:    rgba(255,255,255,0.03);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+
+    .sec__label {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.46em; text-transform: uppercase;
+      color: var(--navy-l); opacity: 0.72; margin-bottom: 14px;
+    }
+    .sec__title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 5.5vw, 68px);
+      line-height: 0.92; letter-spacing: 0.025em;
+      text-transform: uppercase; color: var(--white);
+    }
+    .sec__title em { font-style: normal; color: var(--navy-l); }
+
+    /* ─── Buttons ────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: transform .18s, box-shadow .2s, background .18s, color .18s, border-color .18s;
+      white-space: nowrap;
+    }
+    .btn--navy  { background: var(--navy); color: var(--white); padding: 14px 26px; }
+    .btn--navy:hover { background: var(--navy-d); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(26,58,143,0.5); }
+    .btn--navy:hover .arr { transform: translateX(5px); }
+    .arr { display: inline-block; transition: transform .2s; }
+
+    /* ─── Nav ────────────────────────────────────────────────── */
+    .nav { padding: 20px 32px; }
+    .nav__bar {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 52px; padding: 0 28px;
+    }
+    .nav__logo {
+      display: flex; align-items: center; gap: 9px;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .nav__logo-box { width: 11px; height: 11px; background: var(--navy-l); border-radius: 2px; }
+    .nav__logo-text { font-size: 11px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--white); }
+    .nav__logo-text em { font-style: normal; color: var(--w40); }
+    .nav__back {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--w40); text-decoration: none; transition: color .18s;
+    }
+    .nav__back:hover { color: var(--white); }
+
+    /* ─── Page body ──────────────────────────────────────────── */
+    .contact-page {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 56px 24px 88px;
+      position: relative; overflow: hidden;
+    }
+    .contact-page__glow {
+      position: absolute; top: 40%; left: 50%; transform: translate(-50%,-50%);
+      width: 700px; height: 320px;
+      background: radial-gradient(ellipse, rgba(26,58,143,0.20) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .contact-page__inner { position: relative; z-index: 1; width: 100%; max-width: 560px; }
+    .contact-page__intro {
+      font-size: 14px; line-height: 1.78; color: var(--w40);
+      max-width: 420px; margin: 20px auto 0;
+    }
+    .contact-page__intro a { color: var(--navy-l); text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ─── Contact form ─── */
+    .contact-form {
+      max-width: 520px; margin: 44px auto 0; text-align: left;
+      background: var(--w03); border: 1px solid var(--w08);
+      border-radius: 10px; padding: 34px 30px;
+    }
+    .contact-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .contact-form__field { margin-bottom: 16px; }
+    .contact-form__field label {
+      display: block; font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--navy-l); opacity: 0.82; margin-bottom: 8px;
+    }
+    .contact-form input, .contact-form textarea {
+      width: 100%; background: var(--bg2); border: 1px solid var(--w08);
+      color: var(--white); font-family: 'Inter', sans-serif; font-size: 14px;
+      padding: 12px 14px; border-radius: 5px; transition: border-color .18s, box-shadow .18s;
+    }
+    .contact-form input:focus, .contact-form textarea:focus {
+      outline: none; border-color: rgba(74,127,232,0.6); box-shadow: 0 0 0 3px rgba(74,127,232,0.12);
+    }
+    .contact-form textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+    .contact-form__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .contact-form__submit { width: 100%; justify-content: center; padding: 15px; font-size: 10.5px; margin-top: 6px; }
+    .contact-form__note { font-size: 12px; line-height: 1.5; margin-top: 16px; text-align: center; min-height: 18px; }
+    .contact-form__note--ok  { color: #4fd18b; }
+    .contact-form__note--err { color: #ef7478; }
+    .contact-form .spinner { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 560px) { .contact-form__row { grid-template-columns: 1fr; } }
+
+    /* ─── Footer ─────────────────────────────────────────────── */
+    .footer { background: #020409; border-top: 1px solid var(--w05); padding: 24px 44px; }
+    .footer__copy { max-width: 1280px; margin: 0 auto; text-align: center; font-size: 10.5px; color: var(--w25); letter-spacing: 0.05em; }
+    .footer__copy a { color: var(--w40); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .nav { padding: 16px 20px; }
+      .nav__bar { padding: 0 18px; }
+      .footer { padding: 20px 24px; }
+    }
+    @media (max-width: 480px) {
+      .sec__title { font-size: 38px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__bar">
+    <a href="/" class="nav__logo">
+      <div class="nav__logo-box"></div>
+      <span class="nav__logo-text">EKT <em>/</em> Training</span>
+    </a>
+    <a href="/" class="nav__back">&#8592; Back to Home</a>
+  </div>
+</header>
+
+<main class="contact-page">
+  <div class="contact-page__glow" aria-hidden="true"></div>
+  <div class="contact-page__inner">
+    <p class="sec__label">Start Today</p>
+    <h1 class="sec__title">Send a <em>Message</em></h1>
+    <p class="contact-page__intro">
+      Fill out the form below and Elijah will get back to you.
+      Or email directly at <a href="mailto:elijah02.ek@gmail.com">elijah02.ek@gmail.com</a>.
+    </p>
+
+    <form class="contact-form" id="contactForm" novalidate>
+      <div class="contact-form__row">
+        <div class="contact-form__field">
+          <label for="cfName">Name</label>
+          <input type="text" id="cfName" name="name" autocomplete="name" maxlength="120" required />
+        </div>
+        <div class="contact-form__field">
+          <label for="cfEmail">Email</label>
+          <input type="email" id="cfEmail" name="email" autocomplete="email" maxlength="200" required />
+        </div>
+      </div>
+      <div class="contact-form__field">
+        <label for="cfPhone">Phone</label>
+        <input type="tel" id="cfPhone" name="phone" autocomplete="tel" maxlength="30" placeholder="(555) 123-4567" required />
+      </div>
+      <div class="contact-form__field">
+        <label for="cfMessage">Message <span style="color:var(--w25);font-weight:500;letter-spacing:0;text-transform:none;">(optional)</span></label>
+        <textarea id="cfMessage" name="message" maxlength="2000" placeholder="Tell me a bit about where you're at and what you're after."></textarea>
+      </div>
+      <!-- Honeypot: hidden from real users; bots that fill it are ignored -->
+      <div class="contact-form__hp" aria-hidden="true">
+        <label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+      </div>
+      <button type="submit" class="btn btn--navy contact-form__submit" id="cfSubmit">Send Message <span class="arr">&#8594;</span></button>
+      <p class="contact-form__note" id="cfNote" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__copy">&copy; 2026 EKT Training. All rights reserved. &middot; <a href="mailto:elijah02.ek@gmail.com">elijah02.ek@gmail.com</a></div>
+</footer>
+
+<script>
+  /* ── Consult request form → saved to the site database ── */
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    const note = document.getElementById('cfNote');
+    const submit = document.getElementById('cfSubmit');
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const PHONE_RE = /^[\d\s().+-]{7,30}$/;
+
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      note.className = 'contact-form__note';
+      note.textContent = '';
+
+      const payload = {
+        name: contactForm.name.value.trim(),
+        email: contactForm.email.value.trim(),
+        phone: contactForm.phone.value.trim(),
+        message: contactForm.message.value.trim(),
+        website: contactForm.website.value, // honeypot
+      };
+      if (!payload.name || !payload.email || !payload.phone) {
+        note.className = 'contact-form__note contact-form__note--err';
+        note.textContent = 'Please fill in your name, email, and phone number.';
+        return;
+      }
+      if (!EMAIL_RE.test(payload.email)) {
+        note.className = 'contact-form__note contact-form__note--err';
+        note.textContent = 'Please enter a valid email address.';
+        return;
+      }
+      if (!PHONE_RE.test(payload.phone)) {
+        note.className = 'contact-form__note contact-form__note--err';
+        note.textContent = 'Please enter a valid phone number.';
+        return;
+      }
+
+      submit.disabled = true;
+      const original = submit.innerHTML;
+      submit.innerHTML = '<span class="spinner"></span> Sending…';
+
+      fetch('/api/consult', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then(async (r) => {
+          const data = await r.json().catch(() => ({}));
+          if (!r.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
+          return data;
+        })
+        .then(() => {
+          contactForm.reset();
+          note.className = 'contact-form__note contact-form__note--ok';
+          note.textContent = 'Thanks — your request has been received. Elijah will be in touch soon.';
+        })
+        .catch((err) => {
+          note.className = 'contact-form__note contact-form__note--err';
+          note.textContent = err.message;
+        })
+        .finally(() => {
+          submit.disabled = false;
+          submit.innerHTML = original;
+        });
+    });
+  }
+</script>
+</body>
+</html>
