@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Session — EKT Training</title>
+  <meta name="description" content="Book training sessions with Elijah King Turner. Monthly membership, live availability calendar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:#1A3A8F; --navy-d:#122d72; --navy-l:#4a7fe8; --bg:#05080f; --bg2:#070c18;
+      --white:#fff; --w70:rgba(255,255,255,.70); --w55:rgba(255,255,255,.55);
+      --w40:rgba(255,255,255,.40); --w25:rgba(255,255,255,.25); --w15:rgba(255,255,255,.15);
+      --w08:rgba(255,255,255,.08); --w05:rgba(255,255,255,.05);
+      --ok:#2fae6a; --warn:#e0a642; --err:#e0564a;
+    }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--white);
+      -webkit-font-smoothing:antialiased; min-height:100vh;
+      background-image: radial-gradient(ellipse 60% 50% at 80% -5%, rgba(26,58,143,.18), transparent 60%); }
+    a { color:inherit; }
+    .wrap { max-width:1080px; margin:0 auto; padding:0 28px; }
+
+    /* Top bar */
+    .top { display:flex; align-items:center; justify-content:space-between; padding:22px 28px; max-width:1080px; margin:0 auto; }
+    .logo { display:flex; align-items:center; gap:9px; text-decoration:none; }
+    .logo-box { width:11px; height:11px; background:var(--navy-l); border-radius:2px; }
+    .logo-text { font-size:11px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; }
+    .logo-text em { font-style:normal; color:var(--w40); }
+    .top a.back { font-size:10px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:var(--w40); text-decoration:none; }
+    .top a.back:hover { color:var(--white); }
+
+    .head { text-align:center; padding:40px 0 14px; }
+    .head .label { font-size:9px; font-weight:700; letter-spacing:.46em; text-transform:uppercase; color:var(--navy-l); opacity:.75; }
+    .head h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(44px,7vw,74px); line-height:.92; letter-spacing:.025em; text-transform:uppercase; margin-top:12px; }
+    .head h1 em { font-style:normal; color:var(--navy-l); }
+    .head p { color:var(--w55); font-size:13.5px; line-height:1.7; max-width:520px; margin:16px auto 0; }
+
+    .btn { display:inline-flex; align-items:center; gap:9px; font-size:10px; font-weight:700; letter-spacing:.18em;
+      text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; border-radius:6px;
+      transition:transform .16s, box-shadow .2s, background .16s, color .16s, border-color .16s; }
+    .btn--navy { background:var(--navy); color:#fff; padding:13px 24px; }
+    .btn--navy:hover { background:var(--navy-d); transform:translateY(-2px); box-shadow:0 8px 30px rgba(26,58,143,.5); }
+    .btn--navy:disabled { opacity:.5; cursor:not-allowed; transform:none; box-shadow:none; }
+    .btn--outline { border:1px solid var(--w15); color:var(--w70); padding:12px 20px; background:transparent; }
+    .btn--outline:hover { border-color:var(--w40); color:#fff; }
+    .btn--ghost { color:var(--w55); padding:12px 4px; background:none; }
+    .btn--ghost:hover { color:#fff; }
+    .btn--danger { color:var(--err); border:1px solid rgba(224,86,74,.35); padding:11px 18px; background:transparent; }
+    .btn--danger:hover { background:rgba(224,86,74,.1); }
+
+    .card { background:var(--bg2); border:1px solid var(--w08); border-radius:14px; padding:26px; }
+    .grid { display:grid; grid-template-columns:1.55fr 1fr; gap:24px; align-items:start; margin:26px 0 60px; }
+    @media (max-width:840px){ .grid{ grid-template-columns:1fr; } }
+
+    /* Calendar */
+    .cal__head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .cal__title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:.04em; text-transform:uppercase; }
+    .cal__nav { display:flex; gap:8px; }
+    .cal__nav button { width:34px; height:34px; border-radius:8px; border:1px solid var(--w08); background:transparent; color:var(--w70); cursor:pointer; font-size:16px; transition:.15s; }
+    .cal__nav button:hover:not(:disabled){ border-color:var(--w40); color:#fff; }
+    .cal__nav button:disabled { opacity:.3; cursor:not-allowed; }
+    .dow { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:6px; }
+    .dow span { text-align:center; font-size:9px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--w40); padding:4px 0; }
+    .days { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+    .day { aspect-ratio:1; border-radius:9px; border:1px solid var(--w05); background:var(--w05); position:relative;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:.14s; }
+    .day.empty { background:transparent; border-color:transparent; cursor:default; }
+    .day.closed { opacity:.28; cursor:not-allowed; }
+    .day.has:hover { border-color:var(--navy-l); background:rgba(74,127,232,.1); transform:translateY(-1px); }
+    .day.sel { border-color:var(--navy-l); background:rgba(74,127,232,.18); }
+    .day .num { font-size:13px; font-weight:600; }
+    .day .avail { position:absolute; bottom:7px; width:5px; height:5px; border-radius:50%; background:var(--navy-l); }
+    .day.full .avail { background:var(--warn); }
+    .day.today .num { color:var(--navy-l); }
+
+    .legend { display:flex; gap:16px; margin-top:16px; flex-wrap:wrap; }
+    .legend span { display:inline-flex; align-items:center; gap:6px; font-size:10px; color:var(--w40); letter-spacing:.05em; }
+    .legend i { width:6px; height:6px; border-radius:50%; display:inline-block; }
+
+    /* Slots panel */
+    .panel h3 { font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--w55); margin-bottom:4px; }
+    .panel .sub { font-size:11px; color:var(--w40); margin-bottom:16px; }
+    .slots { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+    .slot { padding:11px 10px; border-radius:8px; border:1px solid var(--w08); background:var(--w05); color:var(--w70);
+      font-size:12px; font-weight:600; letter-spacing:.04em; cursor:pointer; text-align:center; transition:.14s; }
+    .slot:hover:not(:disabled){ border-color:var(--navy-l); color:#fff; }
+    .slot.taken { opacity:.4; text-decoration:line-through; cursor:not-allowed; }
+    .slot.past { opacity:.28; cursor:not-allowed; }
+    .empty-note { font-size:12px; color:var(--w40); padding:18px 0; text-align:center; }
+
+    .msg { font-size:12px; line-height:1.6; padding:11px 14px; border-radius:8px; margin-top:14px; display:none; }
+    .msg.show { display:block; }
+    .msg.ok { background:rgba(47,174,106,.12); color:#7fd8a6; border:1px solid rgba(47,174,106,.25); }
+    .msg.err { background:rgba(224,86,74,.12); color:#efa49c; border:1px solid rgba(224,86,74,.25); }
+    .msg.info { background:rgba(74,127,232,.1); color:#9dbcf3; border:1px solid rgba(74,127,232,.22); }
+
+    /* Account / auth */
+    .field { margin-bottom:14px; }
+    .field label { display:block; font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--w40); margin-bottom:7px; }
+    .field input { width:100%; padding:12px 14px; border-radius:8px; border:1px solid var(--w15); background:var(--bg); color:#fff; font-family:inherit; font-size:13px; }
+    .field input:focus { outline:none; border-color:var(--navy-l); }
+    .tabs { display:flex; gap:6px; margin-bottom:18px; background:var(--w05); padding:4px; border-radius:9px; }
+    .tabs button { flex:1; padding:9px; border:none; background:transparent; color:var(--w40); font-family:inherit; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; border-radius:6px; cursor:pointer; transition:.15s; }
+    .tabs button.active { background:var(--navy); color:#fff; }
+    .status-row { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--w55); margin-bottom:16px; }
+    .badge { font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:4px 9px; border-radius:100px; }
+    .badge.active { background:rgba(47,174,106,.15); color:#7fd8a6; }
+    .badge.inactive { background:rgba(224,166,66,.15); color:#e7c07f; }
+    .divider { height:1px; background:var(--w05); margin:18px 0; }
+    .mybk { list-style:none; }
+    .mybk li { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--w05); font-size:12.5px; }
+    .mybk li:last-child { border-bottom:none; }
+    .mybk .cancel { font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--err); background:none; border:none; cursor:pointer; padding:4px 8px; border-radius:6px; }
+    .mybk .cancel:hover { background:rgba(224,86,74,.1); }
+    .foot-links { text-align:center; padding:30px 0 50px; font-size:10px; letter-spacing:.1em; color:var(--w25); }
+    .foot-links a { color:var(--w40); text-decoration:none; margin:0 10px; }
+    .foot-links a:hover { color:var(--white); }
+    .muted { font-size:11px; color:var(--w40); line-height:1.6; }
+    .hide { display:none !important; }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <a href="/" class="logo"><span class="logo-box"></span><span class="logo-text">EKT <em>/</em> Training</span></a>
+    <a href="/" class="back">← Home</a>
+  </div>
+
+  <header class="head">
+    <p class="label">Membership Booking</p>
+    <h1>Book Your <em>Session</em></h1>
+    <p>Train one-on-one with Elijah King Turner. Members book live from the calendar below — each time slot can be held by only one athlete, so what you see is what's truly open.</p>
+  </header>
+
+  <div class="wrap">
+    <div class="grid">
+      <!-- Calendar -->
+      <section class="card">
+        <div class="cal__head">
+          <div class="cal__title" id="calTitle">—</div>
+          <div class="cal__nav">
+            <button id="prevMonth" aria-label="Previous month">‹</button>
+            <button id="nextMonth" aria-label="Next month">›</button>
+          </div>
+        </div>
+        <div class="dow"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+        <div class="days" id="days"></div>
+        <div class="legend">
+          <span><i style="background:var(--navy-l)"></i> Availability</span>
+          <span><i style="background:var(--warn)"></i> Fully booked</span>
+          <span><i style="background:var(--w25)"></i> Closed</span>
+        </div>
+        <p class="muted" id="tzNote" style="margin-top:14px"></p>
+      </section>
+
+      <!-- Right column: slots + account -->
+      <aside>
+        <section class="card panel" style="margin-bottom:24px;">
+          <h3>Available Times</h3>
+          <p class="sub" id="slotDate">Select a day to see open times.</p>
+          <div class="slots" id="slots"></div>
+          <p class="empty-note hide" id="slotEmpty">No open times on this day.</p>
+          <div class="msg" id="bookMsg"></div>
+        </section>
+
+        <section class="card" id="acctCard">
+          <!-- Filled by JS: either auth form or account panel -->
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <div class="foot-links">
+    <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms</a> · <a href="/contact">Contact</a>
+    <div style="margin-top:10px">© 2026 EKT Training · Elijah King Turner</div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+  const $ = (s, r) => (r || document).querySelector(s);
+  const csrf = () => { const m = document.cookie.match(/(?:^|;\s*)ekt\.csrf=([^;]+)/); return m ? decodeURIComponent(m[1]) : ''; };
+  async function api(url, opts = {}) {
+    const o = Object.assign({ credentials: 'same-origin', headers: {} }, opts);
+    o.headers = Object.assign({ 'Accept': 'application/json' }, o.headers);
+    if (o.body && !(o.body instanceof FormData)) { o.headers['Content-Type'] = 'application/json'; o.body = JSON.stringify(o.body); }
+    if (['POST','PUT','PATCH','DELETE'].includes((o.method || 'GET').toUpperCase())) o.headers['X-CSRF-Token'] = csrf();
+    const r = await fetch(url, o);
+    let data = null; try { data = await r.json(); } catch {}
+    if (!r.ok) throw Object.assign(new Error((data && data.error) || 'Request failed'), { status: r.status, data });
+    return data;
+  }
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const fmtTime = (t) => { let [h,m] = t.split(':').map(Number); const ap = h>=12?'PM':'AM'; h = h%12||12; return `${h}:${String(m).padStart(2,'0')} ${ap}`; };
+  const fmtSlot = (key) => { const [d,t] = key.split('T'); const dt = new Date(d+'T00:00'); return dt.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}) + ' · ' + fmtTime(t); };
+
+  const state = { year:0, month:0, days:[], selectedDate:null, account:null, billingConfigured:false };
+  const now = new Date();
+  const minYM = now.getFullYear()*12 + now.getMonth();
+
+  /* ── Calendar ── */
+  async function loadMonth(y, m) {
+    const data = await api(`/api/slots?year=${y}&month=${m}`);
+    state.year = data.year; state.month = data.month; state.days = data.days;
+    $('#tzNote').textContent = `All times shown in the studio timezone (${data.timezone}). Sessions are ${data.session_minutes} minutes.`;
+    renderCalendar();
+  }
+  function renderCalendar() {
+    $('#calTitle').textContent = `${MONTHS[state.month-1]} ${state.year}`;
+    const ym = state.year*12 + (state.month-1);
+    $('#prevMonth').disabled = ym <= minYM;
+    $('#nextMonth').disabled = ym >= minYM + 12;
+    const first = new Date(state.year, state.month-1, 1).getDay();
+    const grid = $('#days'); grid.innerHTML = '';
+    for (let i=0;i<first;i++){ const e=document.createElement('div'); e.className='day empty'; grid.appendChild(e); }
+    state.days.forEach(day => {
+      const d = document.createElement('div');
+      const dayNum = Number(day.date.split('-')[2]);
+      const open = day.slots.filter(s => !s.booked && !s.past).length;
+      const total = day.slots.filter(s => !s.past).length;
+      d.className = 'day';
+      const isToday = day.date === `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+      if (isToday) d.classList.add('today');
+      if (total === 0) { d.classList.add('closed'); }
+      else {
+        d.classList.add('has');
+        if (open === 0) d.classList.add('full');
+        d.innerHTML = `<span class="num">${dayNum}</span><span class="avail"></span>`;
+        d.addEventListener('click', () => selectDay(day));
+      }
+      if (!d.innerHTML) d.innerHTML = `<span class="num">${dayNum}</span>`;
+      if (state.selectedDate === day.date) d.classList.add('sel');
+      grid.appendChild(d);
+    });
+  }
+  function selectDay(day) {
+    state.selectedDate = day.date;
+    renderCalendar();
+    const dt = new Date(day.date+'T00:00');
+    $('#slotDate').textContent = dt.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+    const wrap = $('#slots'); wrap.innerHTML = '';
+    const usable = day.slots.filter(s => !s.past);
+    $('#slotEmpty').classList.toggle('hide', usable.length > 0);
+    usable.forEach(s => {
+      const b = document.createElement('button');
+      b.className = 'slot' + (s.booked ? ' taken' : '');
+      b.textContent = fmtTime(s.time);
+      b.disabled = s.booked;
+      if (!s.booked) b.addEventListener('click', () => book(s.key));
+      wrap.appendChild(b);
+    });
+  }
+
+  /* ── Booking ── */
+  function showMsg(kind, text) { const el = $('#bookMsg'); el.className = `msg show ${kind}`; el.textContent = text; }
+  async function book(slotKey) {
+    if (!state.account) { showMsg('info', 'Please sign in or create an account below to book.'); return; }
+    if (!state.account.subscription_active) { showMsg('info', 'An active monthly membership is required to book. Start your membership below.'); return; }
+    try {
+      await api('/api/bookings', { method:'POST', body:{ slot: slotKey } });
+      showMsg('ok', `Booked — ${fmtSlot(slotKey)}. See you there!`);
+      await loadMonth(state.year, state.month);
+      const day = state.days.find(d => d.date === state.selectedDate);
+      if (day) selectDay(day);
+      loadMyBookings();
+    } catch (e) {
+      if (e.status === 409) { await loadMonth(state.year, state.month); const day = state.days.find(d => d.date === state.selectedDate); if (day) selectDay(day); }
+      showMsg('err', e.message);
+    }
+  }
+
+  /* ── Account ── */
+  async function refreshSession() {
+    const s = await api('/api/account/session');
+    state.account = s.authenticated ? s.account : null;
+    state.billingConfigured = s.billing_configured;
+    renderAccount();
+    if (state.account) loadMyBookings();
+  }
+  function renderAccount() {
+    const card = $('#acctCard');
+    if (!state.account) { renderAuth(card); return; }
+    const a = state.account;
+    const active = a.subscription_active;
+    const renew = a.current_period_end ? new Date(a.current_period_end).toLocaleDateString() : null;
+    card.innerHTML = `
+      <div class="status-row">
+        <strong style="color:#fff">${a.name || a.email}</strong>
+        <span class="badge ${active?'active':'inactive'}">${active?'Member':'No membership'}</span>
+      </div>
+      ${active
+        ? `<p class="muted">Your monthly membership is active${renew?` — renews ${renew}`:''}. Pick any open time on the calendar to book.</p>
+           <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+             <button class="btn btn--outline" id="portalBtn">Manage membership</button>
+           </div>`
+        : `<p class="muted">Start a monthly membership to unlock booking. Payments are handled securely by Stripe — card details never touch this site.</p>
+           <div style="margin-top:14px;">
+             ${state.billingConfigured
+               ? `<button class="btn btn--navy" id="subBtn">Start monthly membership</button>`
+               : `<p class="msg show info" style="margin-top:0">Online membership sign-up isn't switched on yet. <a href="/contact" style="color:#9dbcf3">Contact us</a> to get set up.</p>`}
+           </div>`}
+      <div class="divider"></div>
+      <h3 style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--w40);margin-bottom:10px">My upcoming sessions</h3>
+      <ul class="mybk" id="myBookings"><li class="muted" style="border:none">Loading…</li></ul>
+      <div class="divider"></div>
+      <details>
+        <summary class="muted" style="cursor:pointer">Account &amp; privacy</summary>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px;">
+          <a class="btn btn--outline" href="/api/account/export">Download my data (JSON)</a>
+          <button class="btn btn--ghost" id="logoutBtn" style="justify-content:flex-start">Sign out</button>
+          <button class="btn btn--danger" id="deleteBtn">Delete my account</button>
+          <p class="muted">Downloading gives you everything we store about you (data portability, GDPR Art. 20 / CCPA). Deleting removes your account and bookings; cancel any active membership in “Manage membership” first.</p>
+        </div>
+      </details>`;
+    const portal = $('#portalBtn'); if (portal) portal.addEventListener('click', openPortal);
+    const sub = $('#subBtn'); if (sub) sub.addEventListener('click', startCheckout);
+    $('#logoutBtn').addEventListener('click', async () => { await api('/api/account/logout',{method:'POST'}); state.account=null; renderAccount(); });
+    $('#deleteBtn').addEventListener('click', deleteAccount);
+  }
+  function renderAuth(card) {
+    card.innerHTML = `
+      <div class="tabs"><button class="active" id="tabIn">Sign in</button><button id="tabUp">Create account</button></div>
+      <form id="authForm">
+        <div class="field" id="nameField" style="display:none"><label>Name</label><input name="name" autocomplete="name" /></div>
+        <div class="field"><label>Email</label><input name="email" type="email" autocomplete="email" required /></div>
+        <div class="field"><label>Password</label><input name="password" type="password" autocomplete="current-password" required minlength="8" /></div>
+        <button class="btn btn--navy" type="submit" style="width:100%;justify-content:center" id="authSubmit">Sign in</button>
+        <div class="msg" id="authMsg"></div>
+      </form>
+      <p class="muted" style="margin-top:14px">Members book from the calendar. By continuing you agree to our <a href="/terms" style="color:#9dbcf3">Terms</a> and <a href="/privacy" style="color:#9dbcf3">Privacy Policy</a>.</p>`;
+    let mode = 'login';
+    const set = (m) => { mode=m;
+      $('#tabIn').classList.toggle('active', m==='login'); $('#tabUp').classList.toggle('active', m==='register');
+      $('#nameField').style.display = m==='register' ? 'block':'none';
+      $('#authSubmit').textContent = m==='register' ? 'Create account' : 'Sign in';
+      $('[name=password]',card).setAttribute('autocomplete', m==='register'?'new-password':'current-password');
+    };
+    $('#tabIn').addEventListener('click', ()=>set('login'));
+    $('#tabUp').addEventListener('click', ()=>set('register'));
+    $('#authForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const body = { email:(fd.get('email')||'').trim(), password:fd.get('password')||'' };
+      if (mode==='register') body.name = (fd.get('name')||'').trim();
+      const m = $('#authMsg');
+      try {
+        const res = await api(`/api/account/${mode==='register'?'register':'login'}`, { method:'POST', body });
+        state.account = res.account; renderAccount(); loadMyBookings();
+      } catch (err) { m.className='msg show err'; m.textContent = err.message; }
+    });
+  }
+  async function loadMyBookings() {
+    const ul = $('#myBookings'); if (!ul) return;
+    try {
+      const { bookings } = await api('/api/bookings');
+      const upcoming = bookings.filter(b => b.status==='booked' && new Date(b.slot_start) >= new Date(Date.now()-3600000)).sort((a,b)=>a.slot_start<b.slot_start?-1:1);
+      ul.innerHTML = upcoming.length ? '' : '<li class="muted" style="border:none">No upcoming sessions yet.</li>';
+      upcoming.forEach(b => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${fmtSlot(b.slot_start)}</span>`;
+        const btn = document.createElement('button'); btn.className='cancel'; btn.textContent='Cancel';
+        btn.addEventListener('click', async () => { await api(`/api/bookings/${b.id}`,{method:'DELETE'}); loadMyBookings(); await loadMonth(state.year,state.month); const day=state.days.find(d=>d.date===state.selectedDate); if(day) selectDay(day); });
+        li.appendChild(btn); ul.appendChild(li);
+      });
+    } catch { ul.innerHTML = '<li class="muted" style="border:none">Sign in to see your sessions.</li>'; }
+  }
+  async function startCheckout() {
+    try { const { url } = await api('/api/billing/checkout',{method:'POST'}); location.href = url; }
+    catch (e) { alert(e.message); }
+  }
+  async function openPortal() {
+    try { const { url } = await api('/api/billing/portal',{method:'POST'}); location.href = url; }
+    catch (e) { alert(e.message); }
+  }
+  async function deleteAccount() {
+    if (!confirm('Permanently delete your account and all bookings? This cannot be undone.')) return;
+    await api('/api/account/delete',{method:'POST'});
+    state.account = null; renderAccount();
+    alert('Your account and data have been deleted.');
+  }
+
+  /* ── Init ── */
+  $('#prevMonth').addEventListener('click', () => { let m=state.month-1,y=state.year; if(m<1){m=12;y--;} loadMonth(y,m); });
+  $('#nextMonth').addEventListener('click', () => { let m=state.month+1,y=state.year; if(m>12){m=1;y++;} loadMonth(y,m); });
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('checkout')==='success') { history.replaceState(null,'','/booking'); }
+
+  loadMonth(now.getFullYear(), now.getMonth()+1).catch(()=>{});
+  refreshSession().catch(()=>{ renderAccount(); });
+})();
+</script>
+</body>
+</html>

@@ -14,6 +14,8 @@ const createSqliteStore = require('./lib/session-store');
 const { processAboutImage, deleteUpload, ImageError, MAX_BYTES, UPLOAD_DIR } = require('./lib/images');
 const { cleanBodyHtml, cleanTitleHtml, cleanText } = require('./lib/sanitize');
 const { sendContactEmail, isConfigured: mailerConfigured } = require('./lib/mailer');
+const stripeSvc = require('./lib/stripe');
+const booking = require('./lib/booking');
 
 const PORT = process.env.PORT || 3000;
 const SECURE_COOKIES = String(process.env.SECURE_COOKIES).toLowerCase() === 'true';
@@ -55,6 +57,100 @@ function generateTempPassword() {
     console.log('└──────────────────────────────────────────────────────────────┘');
   }
 })();
+
+/* ─── Security headers ────────────────────────────────────────────────
+ * A strict, self-hosted Content-Security-Policy plus the usual hardening
+ * headers. The CSP permits only Google Fonts and Stripe.js as external
+ * origins; everything else is same-origin. Inline <style>/<script> in the
+ * static pages are allowed via 'unsafe-inline' (there is no user-injected
+ * markup on those pages — all dynamic HTML is sanitized server-side). */
+const CSP = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'none'",
+  "form-action 'self'",
+  "img-src 'self' data:",
+  "font-src 'self' https://fonts.gstatic.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "script-src 'self' 'unsafe-inline' https://js.stripe.com",
+  "connect-src 'self' https://api.stripe.com",
+  "frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com",
+  "upgrade-insecure-requests",
+].join('; ');
+
+app.use((req, res, next) => {
+  res.set('Content-Security-Policy', CSP);
+  res.set('X-Content-Type-Options', 'nosniff');
+  res.set('X-Frame-Options', 'DENY');
+  res.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(self "https://checkout.stripe.com")');
+  res.set('Cross-Origin-Opener-Policy', 'same-origin');
+  if (SECURE_COOKIES) {
+    res.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  }
+  next();
+});
+
+/* ─── Stripe webhook ──────────────────────────────────────────────────
+ * Mounted BEFORE the JSON body parser because signature verification needs
+ * the exact raw request body. The signature (whsec_… secret) is the trust
+ * boundary — unsigned or forged calls are rejected. */
+app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  if (!stripeSvc.isConfigured() || !stripeSvc.hasWebhookSecret()) {
+    return res.status(503).end();
+  }
+  let event;
+  try {
+    event = stripeSvc.constructEvent(req.body, req.get('stripe-signature'));
+  } catch (err) {
+    console.error('[stripe] webhook signature verification failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  try {
+    handleStripeEvent(event);
+  } catch (err) {
+    console.error('[stripe] webhook handler error:', err);
+    // Still 200 so Stripe doesn't retry a poison event forever; we've logged it.
+  }
+  res.json({ received: true });
+});
+
+/** Reconcile a client's subscription snapshot from a Stripe event. */
+function handleStripeEvent(event) {
+  const obj = event.data && event.data.object;
+  if (!obj) return;
+
+  const applySub = (sub) => {
+    const client = store.getClientByCustomerId(sub.customer);
+    if (!client) return;
+    const periodEnd = sub.current_period_end
+      ? new Date(sub.current_period_end * 1000).toISOString()
+      : null;
+    store.setClientSubscription(client.id, {
+      subscriptionId: sub.id,
+      status: sub.status, // active | trialing | past_due | canceled | unpaid | incomplete …
+      currentPeriodEnd: periodEnd,
+    });
+  };
+
+  switch (event.type) {
+    case 'checkout.session.completed': {
+      // Link the customer id to the client the moment checkout completes.
+      const clientId = Number(obj.client_reference_id);
+      if (clientId && obj.customer) store.setClientStripeCustomer(clientId, obj.customer);
+      break;
+    }
+    case 'customer.subscription.created':
+    case 'customer.subscription.updated':
+    case 'customer.subscription.deleted':
+      applySub(obj);
+      break;
+    default:
+      break;
+  }
+}
 
 /* ─── Middleware ──────────────────────────────────────────────────── */
 app.use(express.json({ limit: '1mb' }));
@@ -144,6 +240,30 @@ function requireFreshPassword(req, res, next) {
 
 // Auth + admin API: CSRF-check all mutating requests before anything else.
 app.use('/api/admin', requireCsrf);
+// Client-facing mutating APIs get the same double-submit CSRF protection.
+// (The Stripe webhook above is exempt — it is verified by signature instead.)
+app.use('/api/account', requireCsrf);
+app.use('/api/bookings', requireCsrf);
+app.use('/api/billing', requireCsrf);
+
+/** Require a signed-in client account. Attaches req.client. */
+function requireClient(req, res, next) {
+  if (!req.session || !req.session.clientId) {
+    return res.status(401).json({ error: 'Please sign in.' });
+  }
+  const client = store.getClientById(req.session.clientId);
+  if (!client) {
+    req.session.destroy(() => {});
+    return res.status(401).json({ error: 'Please sign in.' });
+  }
+  req.client = client;
+  return next();
+}
+
+/** A subscription counts as active if Stripe reports it active or trialing. */
+function hasActiveSubscription(client) {
+  return client && ['active', 'trialing'].includes(client.subscription_status);
+}
 
 /* ─── Public API ──────────────────────────────────────────────────── */
 app.get('/api/about', (req, res) => {
@@ -455,6 +575,240 @@ app.delete('/api/admin/consults/:id', requireAdmin, requireFreshPassword, (req, 
     return res.status(404).json({ error: 'Request not found.' });
   }
   res.json({ ok: true, unread: store.countUnreadConsults() });
+});
+
+/* ═══════════════════════════════════════════════════════════════════
+   CLIENT ACCOUNTS  (people who subscribe and book sessions)
+═══════════════════════════════════════════════════════════════════ */
+
+// Reuse the same per-IP throttle used for admin logins.
+const clientLoginHits = new Map();
+function clientLoginRateLimited(ip) {
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000;
+  const hits = (clientLoginHits.get(ip) || []).filter((t) => now - t < windowMs);
+  hits.push(now);
+  clientLoginHits.set(ip, hits);
+  if (clientLoginHits.size > 5000) clientLoginHits.clear();
+  return hits.length > 10;
+}
+
+function clientPublicView(client) {
+  return {
+    email: client.email,
+    name: client.name,
+    subscription_status: client.subscription_status,
+    subscription_active: hasActiveSubscription(client),
+    current_period_end: client.current_period_end,
+  };
+}
+
+app.post('/api/account/register', (req, res) => {
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+  if (clientLoginRateLimited(ip)) {
+    return res.status(429).json({ error: 'Too many attempts. Please try again in a few minutes.' });
+  }
+  const body = req.body || {};
+  const email = cleanText(body.email).slice(0, 200);
+  const name = cleanText(body.name).slice(0, 120);
+  const password = typeof body.password === 'string' ? body.password : '';
+
+  if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'Please enter a valid email address.' });
+  if (password.length < MIN_PASSWORD_LEN || password.length > 200) {
+    return res.status(400).json({ error: `Password must be at least ${MIN_PASSWORD_LEN} characters.` });
+  }
+  if (store.getClientByEmail(email)) {
+    return res.status(400).json({ error: 'An account with that email already exists. Please sign in.' });
+  }
+
+  const client = store.createClient({ email, name, passwordHash: bcrypt.hashSync(password, 12) });
+  req.session.regenerate((err) => {
+    if (err) return res.status(500).json({ error: 'Could not start session.' });
+    req.session.clientId = client.id;
+    res.json({ ok: true, account: clientPublicView(client) });
+  });
+});
+
+app.post('/api/account/login', (req, res) => {
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+  if (clientLoginRateLimited(ip)) {
+    return res.status(429).json({ error: 'Too many login attempts. Please try again in a few minutes.' });
+  }
+  const { email, password } = req.body || {};
+  if (typeof email !== 'string' || typeof password !== 'string' || !email.trim() || !password) {
+    return res.status(401).json({ error: LOGIN_ERROR });
+  }
+  const client = store.getClientByEmail(email.trim());
+  const ok = bcrypt.compareSync(password, client ? client.password_hash : DUMMY_HASH) && !!client;
+  if (!ok) return res.status(401).json({ error: LOGIN_ERROR });
+
+  req.session.regenerate((err) => {
+    if (err) return res.status(500).json({ error: 'Could not start session.' });
+    req.session.clientId = client.id;
+    res.json({ ok: true, account: clientPublicView(client) });
+  });
+});
+
+app.post('/api/account/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie('ekt.sid');
+    res.json({ ok: true });
+  });
+});
+
+app.get('/api/account/session', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  if (req.session && req.session.clientId) {
+    const client = store.getClientById(req.session.clientId);
+    if (client) {
+      return res.json({
+        authenticated: true,
+        account: clientPublicView(client),
+        billing_configured: stripeSvc.isConfigured(),
+      });
+    }
+  }
+  res.json({ authenticated: false, billing_configured: stripeSvc.isConfigured() });
+});
+
+app.post('/api/account/change-password', requireClient, (req, res) => {
+  const { current_password, new_password } = req.body || {};
+  if (typeof current_password !== 'string' || typeof new_password !== 'string') {
+    return res.status(400).json({ error: 'Please fill in both password fields.' });
+  }
+  if (!bcrypt.compareSync(current_password, req.client.password_hash)) {
+    return res.status(401).json({ error: 'Your current password is incorrect.' });
+  }
+  if (new_password.length < MIN_PASSWORD_LEN || new_password.length > 200) {
+    return res.status(400).json({ error: `New password must be at least ${MIN_PASSWORD_LEN} characters.` });
+  }
+  store.updateClientPassword(req.client.id, bcrypt.hashSync(new_password, 12));
+  res.json({ ok: true });
+});
+
+/* ─── GDPR / CCPA: data access (portability) & erasure ─────────────── */
+
+// Right to data portability — download everything we hold about you as JSON.
+app.get('/api/account/export', requireClient, (req, res) => {
+  const data = store.exportClientData(req.client.id);
+  const payload = {
+    exported_at: new Date().toISOString(),
+    notice: 'This file contains the personal data EKT Training holds about your account, '
+      + 'provided under your right to data portability (GDPR Art. 20 / CCPA). '
+      + 'Payment card details are held only by Stripe and are never stored on this site.',
+    ...data,
+  };
+  res.set('Content-Type', 'application/json');
+  res.set('Content-Disposition', `attachment; filename="ekt-training-my-data-${req.client.id}.json"`);
+  res.send(JSON.stringify(payload, null, 2));
+});
+
+// Right to erasure — delete the account and all bookings. Stripe subscriptions
+// must be cancelled separately in the billing portal (we surface that in the UI).
+app.post('/api/account/delete', requireClient, (req, res) => {
+  const id = req.client.id;
+  store.deleteClient(id);
+  store.deleteSessionsForClient(id);
+  req.session.destroy(() => {
+    res.clearCookie('ekt.sid');
+    res.json({ ok: true });
+  });
+});
+
+/* ─── Billing (Stripe monthly subscription) ───────────────────────── */
+
+app.post('/api/billing/checkout', requireClient, async (req, res) => {
+  if (!stripeSvc.isConfigured()) {
+    return res.status(503).json({ error: 'Online payments are not set up yet. Please contact us to subscribe.' });
+  }
+  try {
+    const customerId = await stripeSvc.ensureCustomer({
+      email: req.client.email,
+      name: req.client.name,
+      existingId: req.client.stripe_customer_id,
+    });
+    if (customerId !== req.client.stripe_customer_id) {
+      store.setClientStripeCustomer(req.client.id, customerId);
+    }
+    const url = await stripeSvc.createCheckoutSession({ customerId, clientId: req.client.id });
+    res.json({ ok: true, url });
+  } catch (err) {
+    console.error('[billing] checkout failed:', err.message);
+    res.status(502).json({ error: 'Could not start checkout. Please try again.' });
+  }
+});
+
+app.post('/api/billing/portal', requireClient, async (req, res) => {
+  if (!stripeSvc.isConfigured() || !req.client.stripe_customer_id) {
+    return res.status(400).json({ error: 'No active billing profile found.' });
+  }
+  try {
+    const url = await stripeSvc.createPortalSession({ customerId: req.client.stripe_customer_id });
+    res.json({ ok: true, url });
+  } catch (err) {
+    console.error('[billing] portal failed:', err.message);
+    res.status(502).json({ error: 'Could not open the billing portal. Please try again.' });
+  }
+});
+
+/* ─── Calendar & bookings ─────────────────────────────────────────── */
+
+// Public: the month grid with availability + which slots are already taken.
+app.get('/api/slots', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const now = new Date();
+  let year = Number(req.query.year);
+  let month = Number(req.query.month); // 1-12
+  if (!Number.isInteger(year) || year < 2020 || year > 2100) year = now.getFullYear();
+  if (!Number.isInteger(month) || month < 1 || month > 12) month = now.getMonth() + 1;
+
+  const fromKey = `${year}-${String(month).padStart(2, '0')}-00`;
+  const toKey = `${year}-${String(month).padStart(2, '0')}-99`;
+  const bookedKeys = new Set(store.bookedSlotKeysInRange(fromKey, toKey));
+  const days = booking.buildMonth(year, month, bookedKeys, now);
+  res.json({ year, month, timezone: booking.BUSINESS_TZ, session_minutes: booking.SESSION_MINUTES, days });
+});
+
+app.get('/api/bookings', requireClient, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ bookings: store.listBookingsForClient(req.client.id) });
+});
+
+app.post('/api/bookings', requireClient, (req, res) => {
+  if (!hasActiveSubscription(req.client)) {
+    return res.status(402).json({
+      error: 'An active monthly subscription is required to book sessions.',
+      code: 'SUBSCRIPTION_REQUIRED',
+    });
+  }
+  const slot = cleanText((req.body || {}).slot);
+  if (!booking.isValidSlotKey(slot)) {
+    return res.status(400).json({ error: 'That time slot is not available.' });
+  }
+  const start = booking.slotKeyToDate(slot);
+  if (!start || start.getTime() < Date.now()) {
+    return res.status(400).json({ error: 'That time slot is in the past.' });
+  }
+  const result = store.createBooking(req.client.id, slot);
+  if (!result.ok) {
+    return res.status(409).json({ error: 'Sorry — that time was just booked by someone else. Please pick another slot.' });
+  }
+  res.json({ ok: true, booking: result.booking });
+});
+
+app.delete('/api/bookings/:id', requireClient, (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid booking id.' });
+  if (!store.cancelBooking(id, req.client.id)) {
+    return res.status(404).json({ error: 'Booking not found.' });
+  }
+  res.json({ ok: true });
+});
+
+// Admin: full booking list.
+app.get('/api/admin/bookings', requireAdmin, requireFreshPassword, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ bookings: store.listAllBookings() });
 });
 
 /* ─── Static assets & pages ───────────────────────────────────────── */

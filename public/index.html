@@ -362,6 +362,50 @@
     .about__socials svg { width: 15px; height: 15px; fill: currentColor; }
 
     /* ════════════════════════════════════════════════════════
+       SCROLL-DRIVEN LIFT  (scroll down → weight rises, up → lowers)
+    ════════════════════════════════════════════════════════ */
+    .lift {
+      position: relative;
+      height: 220vh;              /* tall track gives the scroll room to animate */
+      background:
+        radial-gradient(ellipse 55% 45% at 50% 30%, rgba(26,58,143,0.16), transparent 60%),
+        var(--bg2);
+      border-top: 1px solid var(--w05);
+    }
+    .lift__sticky {
+      position: sticky; top: 0;
+      height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .lift__eyebrow {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.46em;
+      text-transform: uppercase; color: var(--navy-l); opacity: 0.75; margin-bottom: 14px;
+    }
+    .lift__title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(34px, 5vw, 60px); line-height: 0.95;
+      letter-spacing: 0.03em; text-transform: uppercase; text-align: center; color: var(--white);
+      margin-bottom: 6px;
+    }
+    .lift__title em { font-style: normal; color: var(--navy-l); }
+    .lift__hint {
+      font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--w25); margin-bottom: 18px;
+    }
+    .lift__stage { width: min(460px, 82vw); }
+    .lift__stage svg { width: 100%; height: auto; display: block; }
+    /* Progress meter under the figure */
+    .lift__meter { width: min(300px, 70vw); height: 3px; background: var(--w08); border-radius: 3px; margin-top: 26px; overflow: hidden; }
+    .lift__meter i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--navy), var(--navy-l)); border-radius: 3px; }
+    .lift__reps { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--w40); margin-top: 12px; }
+    @media (prefers-reduced-motion: reduce) {
+      .lift { height: auto; }
+      .lift__sticky { position: static; height: auto; padding: 90px 0; }
+    }
+
+    /* ════════════════════════════════════════════════════════
        FOOTER
     ════════════════════════════════════════════════════════ */
     .footer { background: #020409; border-top: 1px solid var(--w05); padding: 36px 44px; }
@@ -472,12 +516,13 @@
     <nav aria-label="Primary">
       <ul class="nav__links">
         <li><a href="#about">About</a></li>
+        <li><a href="/booking">Book</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
 
     <div class="nav__actions">
-      <a href="/contact" class="nav__book">Book Now</a>
+      <a href="/booking" class="nav__book">Book Now</a>
     </div>
 
     <button class="nav__burger" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu(this)">
@@ -489,9 +534,10 @@
 <!-- Mobile menu -->
 <div class="mmenu" id="mobileMenu">
   <a href="#about"    onclick="closeMenu()">About</a>
+  <a href="/booking"  onclick="closeMenu()">Book</a>
   <a href="#contact"  onclick="closeMenu()">Contact</a>
   <div class="mmenu__cta">
-    <a href="/contact" onclick="closeMenu()" class="btn btn--navy">Book Now <span class="arr">&#8594;</span></a>
+    <a href="/booking" onclick="closeMenu()" class="btn btn--navy">Book Now <span class="arr">&#8594;</span></a>
   </div>
 </div>
 
@@ -526,7 +572,7 @@
     </p>
 
     <div class="hero__ctas">
-      <a href="/contact" class="btn btn--navy">Book a Consultation <span class="arr">&#8594;</span></a>
+      <a href="/booking" class="btn btn--navy">Book a Session <span class="arr">&#8594;</span></a>
       <a href="#about" class="btn btn--ghost">About Me</a>
     </div>
   </div>
@@ -573,6 +619,76 @@
     <span class="marquee-item">Transformation<span class="dot"> ✦ </span></span>
   </div>
 </div>
+
+<!-- ══════════════════════════════════════════════
+     SCROLL-DRIVEN LIFT
+══════════════════════════════════════════════ -->
+<section class="lift" id="lift" aria-label="Scroll to lift">
+  <div class="lift__sticky">
+    <p class="lift__eyebrow">Every Rep Counts</p>
+    <h2 class="lift__title">Scroll To <em>Lift</em></h2>
+    <p class="lift__hint" id="liftHint">Scroll down — drive the weight up</p>
+
+    <div class="lift__stage" aria-hidden="true">
+      <!-- Front-view presser. The barbell group is redrawn each frame so the
+           bar rises overhead as you scroll down and lowers as you scroll up. -->
+      <svg id="lifterSvg" viewBox="0 0 400 460" role="img" aria-label="Athlete pressing a barbell overhead">
+        <defs>
+          <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#4a7fe8"/>
+            <stop offset="1" stop-color="#1A3A8F"/>
+          </linearGradient>
+          <radialGradient id="glowGrad" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#4a7fe8" stop-opacity="0.45"/>
+            <stop offset="1" stop-color="#4a7fe8" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2.2"/>
+          </filter>
+        </defs>
+
+        <!-- ground shadow -->
+        <ellipse cx="200" cy="430" rx="86" ry="10" fill="#000" opacity="0.5"/>
+
+        <!-- ── Body (static) ── -->
+        <g stroke="#7f93b8" stroke-width="12" stroke-linecap="round" fill="none">
+          <!-- legs -->
+          <path d="M200 300 L172 410"/>
+          <path d="M200 300 L228 410"/>
+          <!-- torso -->
+          <path d="M200 210 L200 300"/>
+        </g>
+        <!-- hips/shoulders mass -->
+        <path d="M170 300 Q200 288 230 300 L224 214 Q200 204 176 214 Z" fill="#41527a"/>
+        <!-- head -->
+        <circle cx="200" cy="176" r="26" fill="#7f93b8"/>
+        <circle cx="200" cy="176" r="26" fill="url(#glowGrad)"/>
+
+        <!-- ── Dynamic press group (arms + barbell), positions set by JS ── -->
+        <g id="pressGlow" filter="url(#soft)" opacity="0.0">
+          <rect id="glowBar" x="70" y="120" width="260" height="16" rx="8" fill="url(#glowGrad)"/>
+        </g>
+        <g id="arms" stroke="#9db0d6" stroke-width="12" stroke-linecap="round" fill="none">
+          <line id="armL" x1="176" y1="214" x2="176" y2="150"/>
+          <line id="armR" x1="224" y1="214" x2="224" y2="150"/>
+        </g>
+        <g id="barbell">
+          <rect id="bar" x="96" y="142" width="208" height="10" rx="5" fill="url(#barGrad)"/>
+          <!-- plates -->
+          <rect id="plateL1" x="96"  y="126" width="16" height="42" rx="4" fill="#28407a"/>
+          <rect id="plateL2" x="112" y="132" width="12" height="30" rx="3" fill="#1A3A8F"/>
+          <rect id="plateR1" x="288" y="126" width="16" height="42" rx="4" fill="#28407a"/>
+          <rect id="plateR2" x="276" y="132" width="12" height="30" rx="3" fill="#1A3A8F"/>
+          <circle id="handL" cx="176" cy="147" r="9" fill="#9db0d6"/>
+          <circle id="handR" cx="224" cy="147" r="9" fill="#9db0d6"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="lift__meter"><i id="liftMeter"></i></div>
+    <p class="lift__reps" id="liftReps">Rest position</p>
+  </div>
+</section>
 
 <!-- ══════════════════════════════════════════════
      ABOUT
@@ -631,7 +747,10 @@
     </a>
     <ul class="footer__links">
       <li><a href="#about">About</a></li>
+      <li><a href="/booking">Book</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li><a href="/privacy">Privacy</a></li>
+      <li><a href="/terms">Terms</a></li>
     </ul>
     <div class="footer__social">
       <a href="#" class="fsoc" aria-label="Instagram">
@@ -715,6 +834,78 @@
       heroInner.style.opacity   = Math.max(0, 1 - y / (vh * 0.65));
     }
   }, { passive: true });
+
+  /* ── Scroll-driven barbell press ──────────────────────────────────
+     Scroll DOWN drives the weight overhead; scroll UP lowers it back.
+     A requestAnimationFrame loop eases the drawn position toward the
+     scroll target every frame, so motion stays smooth (~60fps) and
+     seamless regardless of how fast the wheel fires. */
+  (function initLift() {
+    const section = document.getElementById('lift');
+    if (!section) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const armL = document.getElementById('armL');
+    const armR = document.getElementById('armR');
+    const handL = document.getElementById('handL');
+    const handR = document.getElementById('handR');
+    const bar = document.getElementById('bar');
+    const glow = document.getElementById('pressGlow');
+    const glowBar = document.getElementById('glowBar');
+    const barbell = document.getElementById('barbell');
+    const meter = document.getElementById('liftMeter');
+    const reps = document.getElementById('liftReps');
+    const hint = document.getElementById('liftHint');
+
+    const REST_Y = 214;   // bar at shoulder / chest — arms bent
+    const TOP_Y  = 70;    // bar locked out overhead
+    const SHOULDER_L = 176, SHOULDER_R = 224, SHOULDER_Y = 214;
+
+    let current = 0;       // eased progress 0..1
+    let target = 0;        // scroll-derived progress 0..1
+    let raf = null;
+
+    function computeTarget() {
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Progress across the tall section's scroll range while it's pinned.
+      const total = section.offsetHeight - vh;
+      const scrolled = Math.min(Math.max(-rect.top, 0), total);
+      target = total > 0 ? scrolled / total : 0;
+    }
+
+    function draw(p) {
+      const barY = REST_Y + (TOP_Y - REST_Y) * p;   // higher scroll → smaller Y → higher bar
+      // Redraw arms from the fixed shoulders up to the moving bar handles.
+      armL.setAttribute('y2', barY + 5);
+      armR.setAttribute('y2', barY + 5);
+      handL.setAttribute('cy', barY + 5);
+      handR.setAttribute('cy', barY + 5);
+      // Move the whole barbell to the current bar height.
+      barbell.setAttribute('transform', `translate(0 ${barY - 147})`);
+      // Glow intensifies near lockout.
+      glow.setAttribute('opacity', (p * 0.9).toFixed(3));
+      glowBar.setAttribute('y', barY - 12);
+      if (meter) meter.style.width = (p * 100).toFixed(1) + '%';
+      if (reps) reps.textContent = p > 0.94 ? 'Locked out — full extension' : p < 0.06 ? 'Rest position' : 'Driving up…';
+      if (hint) hint.style.opacity = String(Math.max(0, 1 - p * 2));
+    }
+
+    function tick() {
+      current += (target - current) * 0.14;         // critical-damped-ish easing
+      if (Math.abs(target - current) < 0.0004) { current = target; }
+      draw(current);
+      if (current !== target) { raf = requestAnimationFrame(tick); }
+      else { raf = null; }
+    }
+    function request() { computeTarget(); if (raf == null) raf = requestAnimationFrame(tick); }
+
+    if (reduce) { draw(1); return; }   // show the finished lift, no motion
+    draw(0);
+    window.addEventListener('scroll', request, { passive: true });
+    window.addEventListener('resize', request, { passive: true });
+    request();
+  })();
 
   /* ── Dynamic About section (managed via /admin) ── */
   const SOCIAL_ICONS = {

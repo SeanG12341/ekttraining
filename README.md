@@ -1,10 +1,31 @@
 # EKT Training
 
-Landing site for EKT Training (Elijah King Turner) with an **admin-editable About section**.
+Landing site for EKT Training (Elijah King Turner) with an **admin-editable About
+section**, a **monthly-membership booking calendar** backed by Stripe, and
+client accounts with GDPR/CCPA data export.
 
-The public site is a single page (`public/index.html`). The About section is rendered
-from content stored in a database and managed through an admin dashboard — no code
-edits required to change it.
+The public site (`public/index.html`) is a single page featuring a scroll-driven
+barbell-press animation. Members book sessions on `/booking`, where each time slot
+can be held by only one athlete — the "no double-booking" guarantee is enforced by a
+database UNIQUE index, not just application checks.
+
+## Features
+
+- **Booking calendar** (`/booking`) — monthly grid of live availability. Booking
+  requires a signed-in client account with an **active Stripe monthly subscription**.
+- **No double-booking** — a partial `UNIQUE` index on the active slot key makes it
+  physically impossible for two bookings to hold the same time.
+- **Stripe subscriptions** — hosted Checkout for sign-up and the Billing Portal for
+  self-service cancellation. Card data never touches this server; a verified webhook
+  keeps each account's subscription status in sync.
+- **Client accounts** — separate from admins: register, sign in, book, cancel.
+- **Data rights** — one-click **JSON export** of everything we hold about a client
+  (data portability, GDPR Art. 20 / CCPA) and **account deletion** (erasure).
+- **Legal pages** — `/privacy` and `/terms`, grounded in real regulations (links to
+  ftc.gov, oag.ca.gov, ico.org.uk) and clearly marked as templates to have reviewed.
+- **Security** — strict Content-Security-Policy + hardening headers, CSRF on every
+  mutating route, bcrypt password hashing, rate-limited sign-in, signed httpOnly
+  session cookies, and signature-verified Stripe webhooks.
 
 ## Requirements
 
@@ -31,6 +52,28 @@ Then open:
 | `ADMIN_INITIAL_PASSWORD` | Optional initial password for the seeded admin account         | —       |
 | `SESSION_SECRET`         | Secret for signing session cookies (use a long one)            | —       |
 | `SECURE_COOKIES`         | Set `true` when served over HTTPS                              | `false` |
+| `STRIPE_SECRET_KEY`      | Stripe secret key — **keep server-side only, never commit**    | —       |
+| `STRIPE_PRICE_ID`        | The recurring monthly Price members subscribe to (`price_…`)   | —       |
+| `STRIPE_WEBHOOK_SECRET`  | Signing secret (`whsec_…`) for `/api/stripe/webhook`           | —       |
+| `PUBLIC_BASE_URL`        | Public URL used for Stripe redirect links                      | `http://localhost:3000` |
+| `BUSINESS_TZ`            | Timezone label shown on the booking calendar                   | `America/New_York` |
+| `AVAILABILITY_JSON`      | Optional weekly availability override (see `.env.example`)     | built-in default |
+
+> **Never commit Stripe keys.** They belong only in `.env` (git-ignored). If a key is
+> ever exposed, roll it immediately in the Stripe dashboard → Developers → API keys.
+
+## Billing setup (Stripe)
+
+1. Create a **Product** in Stripe with a **monthly recurring Price**; copy its
+   `price_…` id into `STRIPE_PRICE_ID`.
+2. Put your `sk_…` secret key in `STRIPE_SECRET_KEY`.
+3. Add a webhook endpoint pointing to `<PUBLIC_BASE_URL>/api/stripe/webhook`,
+   subscribe to `checkout.session.completed` and the three
+   `customer.subscription.*` events, and copy its signing secret into
+   `STRIPE_WEBHOOK_SECRET`.
+
+If Stripe isn't configured, the site still runs — the booking page simply shows a
+"membership sign-up isn't switched on yet" message instead of the subscribe button.
 
 ## Admin accounts & sign-in
 
